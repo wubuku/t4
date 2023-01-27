@@ -54,6 +54,22 @@ namespace Mono.TextTemplating
 
         //public ITextTemplatingEngine Engine { get; set; } //base.Engine;
 
+        /// <summary>
+        /// Default fall-back if not specified by the file
+        /// </summary>
+        public string FileExtension
+        {
+            get { return _fileExtension; }
+        }
+
+        /// <summary>
+        /// Encoding of the Output file
+        /// </summary>
+        public Encoding FileEncoding
+        {
+            get { return _outputEncoding; }
+        }
+
         internal string ProjectFullPath { get; set; }
 
         private ITransformationContextProvider _transformationContextProvider;
@@ -184,7 +200,6 @@ namespace Mono.TextTemplating
                     _vsHierarchyLite = new VsHierarchyLite(this._resolver);
                 }
                 return _vsHierarchyLite;
-				//throw new NotImplementedException();
             }
             set
             {
