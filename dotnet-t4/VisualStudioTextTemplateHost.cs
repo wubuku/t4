@@ -21,21 +21,67 @@
 
 using System;
 using System.CodeDom.Compiler;
-
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.TextTemplating;
 using Microsoft.VisualStudio.TextTemplating.VSHost;
 using T4Toolbox;
+//using AIT.Tools.VisualStudioTextTransform.Properties;
 
 namespace Mono.TextTemplating
 {
 	class VisualStudioTextTemplateHost : TemplateGenerator, IServiceProvider, ITextTemplatingComponents
 	{
+
+        private const string DefaultFileExtension = ".txt";
+        private const string FileProtocol = "file:///";
+        private static readonly TraceSource Source = new TraceSource("Mono.TextTemplating.VisualStudioTextTemplateHost");
+        //private readonly string _templateFile; //base.TemplateFile
+        private readonly string _templateDir;
+        private readonly DTE2 _dte;
+        private readonly IVariableResolver _resolver;
+        //private CompilerErrorCollection _errors; //base.Errors
+        private string _fileExtension = DefaultFileExtension;
+        private Encoding _outputEncoding = Encoding.UTF8;
+
+        //public ITextTemplatingEngine Engine { get; set; } //base.Engine;
+
+        internal string ProjectFullPath { get; set; }
+
         private ITransformationContextProvider _transformationContextProvider;
 
-		public VisualStudioTextTemplateHost ()
-		{
-			Refs.Add (typeof (CompilerErrorCollection).Assembly.Location);
-		}
+        public VisualStudioTextTemplateHost(string templateFile, DTE2 dte, IVariableResolver resolver)
+        {
+            Refs.Add (typeof (CompilerErrorCollection).Assembly.Location);
+            
+            if (string.IsNullOrEmpty(templateFile))
+            {
+                throw new ArgumentNullException("templateFile");
+            }
+
+            if (dte == null)
+            {
+                throw new ArgumentNullException("dte");
+            }
+            if (resolver == null)
+            {
+                throw new ArgumentNullException("resolver");
+            }
+            this.TemplateFile = templateFile;
+            _dte = dte;
+            _resolver = resolver;
+            var directoryName = Path.GetDirectoryName(templateFile);
+            Debug.Assert(directoryName != null, "directoryName != null, don't expect templateFile to be a root directory!");
+            _templateDir = Path.GetFullPath(directoryName);
+        }
 
 		protected override ITextTemplatingSession CreateSession () => new ToolTemplateSession (this);
 

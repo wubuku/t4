@@ -62,7 +62,7 @@ namespace Mono.TextTemplating
 				ShowHelp (true);
 			}
 
-			var generator = new VisualStudioTextTemplateHost ();
+			VisualStudioTextTemplateHost generator = null;//todo new VisualStudioTextTemplateHost ();
 			string outputFile = null, inputFile = null;
 			var properties = new Dictionary<string,string> ();
 			string preprocessClassName = null;
