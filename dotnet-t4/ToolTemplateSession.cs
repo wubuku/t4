@@ -30,11 +30,11 @@ namespace Mono.TextTemplating
 	class ToolTemplateSession : ITextTemplatingSession
 	{
 		readonly Dictionary<string, object> session = new Dictionary<string, object> ();
-		readonly VisualStudioTextTemplateHost toolTemplateGenerator;
+		readonly TemplateGenerator templateGenerator;
 
-		public ToolTemplateSession (VisualStudioTextTemplateHost toolTemplateGenerator)
+		public ToolTemplateSession (TemplateGenerator toolTemplateGenerator)
 		{
-			this.toolTemplateGenerator = toolTemplateGenerator;
+			this.templateGenerator = toolTemplateGenerator;
 		}
 
 		public object this [string key] {
