@@ -27,10 +27,10 @@
     <Compile Include="..\TextTransform\Options.cs" Link="Options.cs" />
     <None Include="readme.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
- <!-- <ItemGroup>
+  <ItemGroup>
     <Reference Include="T4Toolbox.EnvDteLites">
       <HintPath>../../../olegsych/T4Toolbox/src/T4Toolbox.EnvDteLites/bin/Debug/net6.0/T4Toolbox.EnvDteLites.dll</HintPath>
     </Reference>
-  </ItemGroup>-->
+  </ItemGroup>
 
 </Project>
