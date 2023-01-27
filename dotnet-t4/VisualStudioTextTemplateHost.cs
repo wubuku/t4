@@ -173,18 +173,18 @@ namespace Mono.TextTemplating
             }
         }
 
-        // private VsHierarchyLite _vsHierarchyLite;
+        private VsHierarchyLite _vsHierarchyLite;
 
         object ITextTemplatingComponents.Hierarchy
         {
             get
             {
-                // if (_vsHierarchyLite == null)
-                // {
-                //     _vsHierarchyLite = new VsHierarchyLite(this._resolver);
-                // }
-                // return _vsHierarchyLite;
-				throw new NotImplementedException();
+                if (_vsHierarchyLite == null)
+                {
+                    _vsHierarchyLite = new VsHierarchyLite(this._resolver);
+                }
+                return _vsHierarchyLite;
+				//throw new NotImplementedException();
             }
             set
             {
