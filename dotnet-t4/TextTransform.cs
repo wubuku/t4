@@ -62,7 +62,7 @@ namespace Mono.TextTemplating
 				ShowHelp (true);
 			}
 
-			var generator = new ToolTemplateGenerator ();
+			var generator = new VisualStudioTextTemplateHost ();
 			string outputFile = null, inputFile = null;
 			var properties = new Dictionary<string,string> ();
 			string preprocessClassName = null;
@@ -265,7 +265,7 @@ namespace Mono.TextTemplating
 			}
 		}
 
-		static void AddCoercedSessionParameters (ToolTemplateGenerator generator, ParsedTemplate pt, Dictionary<string, string> properties)
+		static void AddCoercedSessionParameters (VisualStudioTextTemplateHost generator, ParsedTemplate pt, Dictionary<string, string> properties)
 		{
 			if (properties.Count == 0) {
 				return;

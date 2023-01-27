@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <!--<TargetFramework>net6.0</TargetFramework>-->
+    <!--<AssemblyName>t4</AssemblyName>-->
+    <!--<PackageId>dotnet-t4</PackageId>-->
+    <!--<TargetFramework>netcoreapp3.1</TargetFramework>-->
     <AssemblyName>t4</AssemblyName>
     <PackageId>dotnet-t4</PackageId>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <!--<AssemblyName>t4toolbox</AssemblyName>
-    <PackageId>dotnet-t4toolbox</PackageId>-->
+    <TargetFramework>net6.0</TargetFramework>
     <RollForward>LatestMajor</RollForward>
     <Description>Command-line tool for processing T4 templates, a general-purpose way to generate text or code files using C#</Description>
-    <!--<ToolCommandName>t4toolbox</ToolCommandName>-->
     <ToolCommandName>t4</ToolCommandName>
+    <!--<ToolCommandName>t4</ToolCommandName>-->
     <RootNamespace>Mono.TextTemplating</RootNamespace>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
@@ -22,14 +22,34 @@
     <ExternalConsole>false</ExternalConsole>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mono.TextTemplating\Mono.TextTemplating.csproj" />
     <Compile Include="..\TextTransform\Options.cs" Link="Options.cs" />
-    <None Include="readme.md" Pack="true" PackagePath="\"/>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="T4Toolbox.Lites.VisualStudio.Interfaces">
+      <HintPath>../../../../GitHub/VisualStudioTextTransform/src/VisualStudio.Interfaces/bin/Debug/netstandard2.0/T4Toolbox.Lites.VisualStudio.Interfaces.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="T4Toolbox.VSTextTemplating">
+      <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox.VSTextTemplating/bin/Debug/netstandard2.0/T4Toolbox.VSTextTemplating.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="T4Toolbox">
+      <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox/bin/Debug/netstandard2.0/T4Toolbox.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="T4Toolbox.EnvDteLites">
-      <HintPath>../../../olegsych/T4Toolbox/src/T4Toolbox.EnvDteLites/bin/Debug/net6.0/T4Toolbox.EnvDteLites.dll</HintPath>
+      <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox.EnvDteLites/bin/Debug/net6.0/T4Toolbox.EnvDteLites.dll</HintPath>
     </Reference>
   </ItemGroup>
 
