@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>t4</AssemblyName>
-    <PackageId>dotnet-t4</PackageId>
+    <TargetFramework>net6.0</TargetFramework>
+    <!--<TargetFramework>netcoreapp3.1</TargetFramework>-->
+    <AssemblyName>t4toolbox</AssemblyName>
+    <PackageId>dotnet-t4toolbox</PackageId>
     <RollForward>LatestMajor</RollForward>
     <Description>Command-line tool for processing T4 templates, a general-purpose way to generate text or code files using C#</Description>
-    <ToolCommandName>t4</ToolCommandName>
+    <ToolCommandName>t4toolbox</ToolCommandName>
     <RootNamespace>Mono.TextTemplating</RootNamespace>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
@@ -23,4 +24,10 @@
     <Compile Include="..\TextTransform\Options.cs" Link="Options.cs" />
     <None Include="readme.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="T4Toolbox.Lites.VisualStudio.Interfaces">
+      <HintPath>../../../olegsych/T4Toolbox/src/T4Toolbox.EnvDteLites/bin/Debug/net6.0/T4Toolbox.EnvDteLites.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
