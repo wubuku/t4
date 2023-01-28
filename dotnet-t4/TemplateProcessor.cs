@@ -75,11 +75,11 @@ namespace Mono.TextTemplating
                 using (new LogicalCallContextChange("NamespaceHint", finalNamespace))
                 {
                     
-                    var host = new VisualStudioTextTemplateHost(templateFileName, dte, resolver);
+                    var host = new VisualStudioTextTemplateHost(templateFileName, dte, resolver, project);
                     var engine = new Engine();
                     // ////////////////////////
-                    host.ProjectFullPath = project.FullName;
-                    //todo ???host.Engine = engine;
+                    //host.ProjectFullPath = project.FullName;
+                    //host.Engine = engine;
                     // ////////////////////////
                     var input = File.ReadAllText(templateFileName);
                     var output = engine.ProcessTemplate(input, host);
@@ -204,7 +204,7 @@ namespace Mono.TextTemplating
             //using (new MessageFilter())
             {
                 //var result = DteHelper.CreateDteInstance();
-                DTE2 dte = null;//todo ???new DTELite(result.Item2); //result.Item2;
+                DTE2 dte = new DTELite(); //result.Item2;
                 //var processId = result.Item1;
                 try
                 {

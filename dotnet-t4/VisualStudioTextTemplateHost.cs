@@ -52,6 +52,8 @@ namespace Mono.TextTemplating
         private string _fileExtension = DefaultFileExtension;
         private Encoding _outputEncoding = Encoding.UTF8;
 
+        private Project _project;
+
         //public ITextTemplatingEngine Engine { get; set; } //base.Engine;
 
         /// <summary>
@@ -70,11 +72,15 @@ namespace Mono.TextTemplating
             get { return _outputEncoding; }
         }
 
-        internal string ProjectFullPath { get; set; }
+        internal string ProjectFullPath 
+        { 
+            get { return _project.FullName; } 
+            //set; 
+        }
 
         private ITransformationContextProvider _transformationContextProvider;
 
-        public VisualStudioTextTemplateHost(string templateFile, DTE2 dte, IVariableResolver resolver)
+        public VisualStudioTextTemplateHost(string templateFile, DTE2 dte, IVariableResolver resolver, Project project)
         {
             Refs.Add (typeof (CompilerErrorCollection).Assembly.Location);
             
@@ -97,6 +103,7 @@ namespace Mono.TextTemplating
             var directoryName = Path.GetDirectoryName(templateFile);
             Debug.Assert(directoryName != null, "directoryName != null, don't expect templateFile to be a root directory!");
             _templateDir = Path.GetFullPath(directoryName);
+            _project = project;
         }
 
 		protected override ITextTemplatingSession CreateSession () => new ToolTemplateSession (this);
@@ -197,7 +204,7 @@ namespace Mono.TextTemplating
             {
                 if (_vsHierarchyLite == null)
                 {
-                    _vsHierarchyLite = new VsHierarchyLite(this._resolver);
+                    _vsHierarchyLite = new VsHierarchyLite(this._resolver, this._project);
                 }
                 return _vsHierarchyLite;
             }
