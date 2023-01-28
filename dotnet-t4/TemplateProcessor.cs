@@ -72,7 +72,7 @@ namespace Mono.TextTemplating
                         string.Format(CultureInfo.InvariantCulture, "{0}.{1}", defaultNamespace, relativeNamespace);
                 }
 
-                //todo using (new LogicalCallContextChange("NamespaceHint", finalNamespace))
+                using (new LogicalCallContextChange("NamespaceHint", finalNamespace))
                 {
                     
                     var host = new VisualStudioTextTemplateHost(templateFileName, dte, resolver);
@@ -201,7 +201,7 @@ namespace Mono.TextTemplating
 
             solutionFileName = Path.GetFullPath(solutionFileName);
             Source.TraceEvent(TraceEventType.Information, 0, Resources.Program_Main_Creating_VS_instance___);
-            //todo using (new MessageFilter())
+            //using (new MessageFilter())
             {
                 //var result = DteHelper.CreateDteInstance();
                 DTE2 dte = null;//todo ???new DTELite(result.Item2); //result.Item2;
