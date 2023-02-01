@@ -52,5 +52,14 @@
       <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox.EnvDteLites/bin/Debug/net6.0/T4Toolbox.EnvDteLites.dll</HintPath>
     </Reference>
   </ItemGroup>
-
+  <ItemGroup>
+    <Reference Include="T4Toolbox.DirectiveProcessors">
+      <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox.DirectiveProcessors/bin/Debug/netstandard2.0/T4Toolbox.DirectiveProcessors.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="T4Toolbox.VisualStudio">
+      <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox.VisualStudio/bin/Debug/net6.0/T4Toolbox.VisualStudio.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

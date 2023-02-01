@@ -83,7 +83,17 @@ namespace Mono.TextTemplating
         public VisualStudioTextTemplateHost(string templateFile, DTE2 dte, IVariableResolver resolver, Project project)
         {
             Refs.Add (typeof (CompilerErrorCollection).Assembly.Location);
+            Refs.Add (typeof (global::T4Toolbox.Template).Assembly.Location);
+            Refs.Add (typeof (global::T4Toolbox.DirectiveProcessors.DirectiveProcessor).Assembly.Location);
+            Refs.Add (typeof (global::T4Toolbox.EnvDteLites.DTELite).Assembly.Location);
+            Refs.Add (typeof (global::T4Toolbox.VisualStudio.TransformationContextProvider).Assembly.Location);
             
+            AddDirectiveProcessor(
+                "T4Toolbox.TransformationContextProcesso", 
+                "T4Toolbox.DirectiveProcessors.DirectiveProcessor",
+                typeof (global::T4Toolbox.VisualStudio.TransformationContextProvider).Assembly.FullName
+            );
+
             if (string.IsNullOrEmpty(templateFile))
             {
                 throw new ArgumentNullException("templateFile");
@@ -133,11 +143,9 @@ namespace Mono.TextTemplating
             if (serviceType == typeof(ITransformationContextProvider))//TextTemplateHostSettings.Default.GetType("T4Toolbox.ITransformationContextProvider"))
 			{
 			    if (_transformationContextProvider == null)
-			    {
-                    //todo fill _transformationContextProvider
-			        // var cp = new TransformationContextProvider(this);
-			        // cp.ProjectFullPath = this.ProjectFullPath;
-			        // _transformationContextProvider = cp;
+			    {                    
+			        var cp = new global::T4Toolbox.VisualStudio.TransformationContextProvider(this);
+			        _transformationContextProvider = cp;
 			    }
 			    return _transformationContextProvider;
 			}
