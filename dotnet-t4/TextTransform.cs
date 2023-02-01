@@ -62,13 +62,19 @@ namespace Mono.TextTemplating
 				ShowHelp (true);
 			}
 
-			var generator = new ToolTemplateGenerator();
 			//todo new VisualStudioTextTemplateHost ();
 			string outputFile = null, inputFile = null;
-			var properties = new Dictionary<string,string> ();
+			var properties = new Dictionary<string, string> ();
 			string preprocessClassName = null;
 			bool debug = false;
 			bool verbose = false;
+
+			List<string> generatorRefs = new ();
+			List<string> generatorImports = new ();
+			List<string> generatorIncludePaths = new ();
+			List<string> generatorReferencePaths = new ();
+			Dictionary<string, KeyValuePair<string, string>> directiveProcessors = new ();
+			Dictionary<Tuple<string, string, string>, string> generatorParameters = new ();
 
 			optionSet = new OptionSet {
 				{
@@ -82,22 +88,22 @@ namespace Mono.TextTemplating
 					"r=",
 					"Add an {<assembly>} reference by path or assembly name. It will be resolved from the " +
 					"framework and assembly directories.",
-					s => generator.Refs.Add (s)
+					s => generatorRefs.Add (s)
 				},
 				{
 					"u=|using=",
 					"Import a {<namespace>} by generating a using statement.",
-					s => generator.Imports.Add (s)
+					s => generatorImports.Add (s)
 				},
 				{
 					"I=",
 					"Add a {<directory>} to be searched when resolving included files.",
-					s => generator.IncludePaths.Add (s)
+					s => generatorIncludePaths.Add (s)
 				},
 				{
 					"P=",
 					"Add a {<directory>} to be searched when resolving assemblies.",
-					s => generator.ReferencePaths.Add (s)
+					s => generatorReferencePaths.Add (s)
 				},
 				{
 					"c=|class=",
@@ -131,7 +137,8 @@ namespace Mono.TextTemplating
 					"dp=!",
 					"Set {0:<directive>} to be handled by directive processor {1:<class>} in {2:<assembly>}.",
 					3,
-					a => generator.AddDirectiveProcessor(a[0], a[1], a[2])
+					//a => generator.AddDirectiveProcessor(a[0], a[1], a[2])
+					a => directiveProcessors.Add(a[0], new KeyValuePair<string, string>(a[1], a[2]))
 				),
 				new CustomOption (
 					"a=!=",
@@ -141,18 +148,26 @@ namespace Mono.TextTemplating
 					4,
 					a => {
 						if (a.Count == 2) {
-							generator.AddParameter (null, null, a[0], a[1]);
+							//generator.AddParameter (null, null, a[0], a[1]);
+							generatorParameters.Add (new (null, null, a[0]), a[1]);
 						} else if (a.Count == 3) {
-							generator.AddParameter (null, a[0], a[1], a[2]);
-
+							//generator.AddParameter (null, a[0], a[1], a[2]);
+							generatorParameters.Add (new (null, a[0], a[1]), a[2]);
 						} else {
-							generator.AddParameter (a[0], a[1], a[2], a[3]);
+							generatorParameters.Add (new (a[0], a[1], a[2]), a[3]);
 						}
 					}
 				)
 			};
-
+		
 			var remainingArgs = optionSet.Parse (args);
+			
+			var generator = new ToolTemplateGenerator ();
+			var generatorSetting = new TemplateGeneratorUtils.TemplateGeneratorSetting(
+				generatorRefs, generatorImports, generatorIncludePaths, generatorReferencePaths,
+				directiveProcessors, generatorParameters
+			);
+			TemplateGeneratorUtils.SetTemplateGenerator (generatorSetting, generator);
 
 			string inputContent = null;
 			bool inputIsFromStdin = false;
@@ -166,7 +181,7 @@ namespace Mono.TextTemplating
 					return 1;
 				}
 			} else {
-				inputFile = remainingArgs [0];
+				inputFile = remainingArgs[0];
 				if (!File.Exists (inputFile)) {
 					Console.Error.WriteLine ("Input file '{0}' does not exist.", inputFile);
 					return 1;
@@ -203,7 +218,7 @@ namespace Mono.TextTemplating
 				return 1;
 			}
 
-			var pt = generator.ParseTemplate(inputFile, inputContent);
+			var pt = generator.ParseTemplate (inputFile, inputContent);
 
 			TemplateSettings settings = TemplatingEngine.GetSettings (generator, pt);
 			if (debug) {

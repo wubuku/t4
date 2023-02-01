@@ -75,18 +75,85 @@ namespace Mono.TextTemplating
                 using (new LogicalCallContextChange("NamespaceHint", finalNamespace))
                 {
                     
-                    var host = new VisualStudioTextTemplateHost(templateFileName, dte, resolver, project);
-                    var engine = new Engine();
-                    // ////////////////////////
-                    //host.ProjectFullPath = project.FullName;
-                    //host.Engine = engine;
-                    // ////////////////////////
-                    var input = File.ReadAllText(templateFileName);
-                    var output = engine.ProcessTemplate(input, host);
-                    // ////////////////////////
-                    //host.UpdateOutputFiles();
-                    // ////////////////////////
-                    return Tuple.Create(output, host);
+                    var generator = new VisualStudioTextTemplateHost(templateFileName, dte, resolver, project);
+                    // var engine = new Engine();
+                    // // ////////////////////////
+                    // //host.ProjectFullPath = project.FullName;
+                    // //host.Engine = engine;
+                    // // ////////////////////////
+                    // var input = File.ReadAllText(templateFileName);
+                    // var output = engine.ProcessTemplate(input, host);
+                    // // ////////////////////////
+                    // //host.UpdateOutputFiles();
+                    // // ////////////////////////
+                    // return Tuple.Create(output, host);
+                    
+                    var inputFile = templateFileName;
+                    string inputContent = null;
+                    if (inputFile != null) {
+                        // try {
+                            inputContent = File.ReadAllText (inputFile);
+                        // }
+                        // catch (IOException ex) {
+                        // 	Console.Error.WriteLine ("Could not read input file '" + inputFile + "':\n" + ex);
+                        // 	return 1;
+                        // }
+                    }
+
+                    if (inputContent.Length == 0) {
+                        // Console.Error.WriteLine ("Input is empty");
+                        // return 1;
+                    }
+
+                    var pt = generator.ParseTemplate(inputFile, inputContent);
+
+                    TemplateSettings settings = TemplatingEngine.GetSettings (generator, pt);
+                    // if (debug) {
+                    //     settings.Debug = true;
+                    // }
+                    // if (verbose) {
+                    //     settings.Log = Console.Out;
+                    // }
+
+                    if (pt.Errors.Count > 0) {
+                        generator.Errors.AddRange (pt.Errors);
+                    }
+
+                    string outputContent = null;
+                    // if (!generator.Errors.HasErrors) {
+                    //     AddCoercedSessionParameters (generator, pt, properties);
+                    // }
+
+                    
+                    string outputFile = null;
+
+                    bool writeToStdout = false;// outputFile == "-" || (inputIsFromStdin && string.IsNullOrEmpty (outputFile));
+                    bool isDefaultOutputFilename = false;
+
+                    if (!writeToStdout && string.IsNullOrEmpty (outputFile)) {
+                        outputFile = inputFile;
+                        isDefaultOutputFilename = true;
+                        if (Path.HasExtension (outputFile)) {
+                            var dir = Path.GetDirectoryName (outputFile);
+                            var fn = Path.GetFileNameWithoutExtension (outputFile);
+                            outputFile = Path.Combine (dir, fn + ".txt");
+                        } else {
+                            outputFile = outputFile + ".txt";
+                        }
+                    }
+
+                    // if (!generator.Errors.HasErrors) {
+                    // 	if (preprocessClassName == null) {
+                    (outputFile, outputContent) = generator.ProcessTemplateAsync (pt, inputFile, inputContent, outputFile, settings).Result;
+                    // 	} else {
+                    // 		SplitClassName (preprocessClassName, settings);
+                    // 		outputContent = generator.PreprocessTemplate (pt, inputFile, inputContent, settings, out _);
+                    // 		if (isDefaultOutputFilename) {
+                    // 			outputFile = Path.ChangeExtension (outputFile, settings.Provider.FileExtension);
+                    // 		}
+                    // 	}
+                    // }                    
+                    return Tuple.Create(outputContent, generator);
                 }
             }
             finally
@@ -101,7 +168,7 @@ namespace Mono.TextTemplating
         /// <param name="dte"></param>
         /// <param name="templateFileName"></param>
         /// <returns>null if we could not process the template and an error-collection of the compilation otherwise.</returns>
-        public static CompilerErrorCollection ProcessTemplate(DTE2 dte, string templateFileName, string targetDir)
+        public static CompilerErrorCollection ProcessTemplate(DTE2 dte, string templateFileName, string targetDir, TemplateGeneratorUtils.TemplateGeneratorSetting setting)
         {
             if (dte == null)
             {
@@ -142,6 +209,10 @@ namespace Mono.TextTemplating
             var host = result.Item2;
             var output = result.Item1;
 
+            // ///////////////////////////////////
+            TemplateGeneratorUtils.SetTemplateGenerator(setting, host);
+            // ///////////////////////////////////
+            
             var outFileName = Path.GetFileNameWithoutExtension(templateFileName);
             var outFilePath = Path.Combine(templateDir, outFileName + host.FileExtension);
             // Because with TFS the files could be read-only!
@@ -190,7 +261,7 @@ namespace Mono.TextTemplating
         /// </summary>
         /// <param name="solutionFileName"></param>
         /// <returns></returns>
-        public static bool ProcessSolution(string solutionFileName, string targetDir, ICollection<Regex> fileNamePatterns = null)
+        public static bool ProcessSolution(string solutionFileName, string targetDir, ICollection<Regex> fileNamePatterns, TemplateGeneratorUtils.TemplateGeneratorSetting setting)
         {
             if (string.IsNullOrEmpty(solutionFileName) || !File.Exists(solutionFileName))
             {
@@ -219,7 +290,7 @@ namespace Mono.TextTemplating
                                     { 
                                         try
                                         {
-                                            return Tuple.Create(t, ProcessTemplate(dte, t, targetDir));
+                                            return Tuple.Create(t, ProcessTemplate(dte, t, targetDir, setting));
                                         }
                                         catch (TemplateNotPartOfSolutionException)
                                         {
