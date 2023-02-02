@@ -162,13 +162,6 @@ namespace Mono.TextTemplating
 		
 			var remainingArgs = optionSet.Parse (args);
 			
-			var generator = new ToolTemplateGenerator ();
-			var generatorSetting = new TemplateGeneratorUtils.TemplateGeneratorSetting(
-				generatorRefs, generatorImports, generatorIncludePaths, generatorReferencePaths,
-				directiveProcessors, generatorParameters
-			);
-			TemplateGeneratorUtils.SetTemplateGenerator (generatorSetting, generator);
-
 			string inputContent = null;
 			bool inputIsFromStdin = false;
 
@@ -203,7 +196,19 @@ namespace Mono.TextTemplating
 				}
 			}
 
+			var generatorSetting = new TemplateGeneratorUtils.TemplateGeneratorSetting(
+				generatorRefs, generatorImports, generatorIncludePaths, generatorReferencePaths,
+				directiveProcessors, generatorParameters
+			);
+
 			if (inputFile != null) {
+				// ///////////////////////////////////////////////
+				if (inputFile.EndsWith(".sln")) 
+				{
+					var ok = TemplateProcessor.ProcessSolution(inputFile, null, null, generatorSetting);
+					return ok ? 0 : 1;
+				}
+				// ///////////////////////////////////////////////
 				try {
 					inputContent = File.ReadAllText (inputFile);
 				}
@@ -217,6 +222,9 @@ namespace Mono.TextTemplating
 				Console.Error.WriteLine ("Input is empty");
 				return 1;
 			}
+
+			var generator = new ToolTemplateGenerator ();		
+			TemplateGeneratorUtils.SetTemplateGenerator (generatorSetting, generator);
 
 			var pt = generator.ParseTemplate (inputFile, inputContent);
 

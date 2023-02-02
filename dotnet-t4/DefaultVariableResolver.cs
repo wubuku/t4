@@ -73,6 +73,7 @@ namespace Mono.TextTemplating
 
 			var templateFileItem = dte.Solution.FindProjectItem (templateFile);
 			if (templateFileItem == null) { // This item is not part of the solution
+				//Console.WriteLine("The template-file " + templateFile + " was not found in the given solution!"); // debug
 				throw new TemplateNotPartOfSolutionException ("The template-file " + templateFile + " was not found in the given solution!");
 			}
 			var project = templateFileItem.ContainingProject;

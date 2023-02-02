@@ -32,6 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="17.3.2" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <Reference Include="T4Toolbox.Lites.VisualStudio.Interfaces">
       <HintPath>../../../../GitHub/VisualStudioTextTransform/src/VisualStudio.Interfaces/bin/Debug/netstandard2.0/T4Toolbox.Lites.VisualStudio.Interfaces.dll</HintPath>
     </Reference>

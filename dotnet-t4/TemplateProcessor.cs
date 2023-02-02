@@ -28,7 +28,7 @@ namespace Mono.TextTemplating
         /// <param name="templateFileName"></param>
         /// <param name="resolver"></param>
         /// <returns></returns>
-        static Tuple<string, VisualStudioTextTemplateHost> ProcessTemplateInMemory(DTE2 dte, string templateFileName, IVariableResolver resolver)
+        static Tuple<string, VisualStudioTextTemplateHost> ProcessTemplateInMemory(DTE2 dte, string templateFileName, IVariableResolver resolver, TemplateGeneratorUtils.TemplateGeneratorSetting setting)
         {
             if (dte == null)
             {
@@ -76,6 +76,13 @@ namespace Mono.TextTemplating
                 {
                     
                     var generator = new VisualStudioTextTemplateHost(templateFileName, dte, resolver, project);
+
+                    // ///////////////////////////////////
+                    TemplateGeneratorUtils.SetTemplateGenerator(setting, generator);
+                    //Console.WriteLine("about to process template: " + templateFileName);
+                    //if (true) { return new Tuple<string, VisualStudioTextTemplateHost>(null, generator); } // debug
+                    // ///////////////////////////////////
+
                     // var engine = new Engine();
                     // // ////////////////////////
                     // //host.ProjectFullPath = project.FullName;
@@ -124,6 +131,8 @@ namespace Mono.TextTemplating
                     //     AddCoercedSessionParameters (generator, pt, properties);
                     // }
 
+                    //Console.WriteLine("about to process template: " + templateFileName);
+                    //if (true) { return new Tuple<string, VisualStudioTextTemplateHost>(null, generator); } // for debug
                     
                     string outputFile = null;
 
@@ -178,10 +187,10 @@ namespace Mono.TextTemplating
             {
                 throw new ArgumentNullException("templateFileName");
             }
-            if (targetDir == null)
-            {
-                throw new ArgumentNullException("targetDir");
-            }
+            // if (targetDir == null)
+            // {
+            //     throw new ArgumentNullException("targetDir");
+            // }
             var templateDir = Path.GetDirectoryName(templateFileName);
             Debug.Assert(templateDir != null, "templateDir != null, don't expected templateFileName to be a root directory!");
 
@@ -205,13 +214,10 @@ namespace Mono.TextTemplating
                 }
             }
 
-            var result = ProcessTemplateInMemory(dte, templateFileName, resolver);
+            var result = ProcessTemplateInMemory(dte, templateFileName, resolver, setting);
             var host = result.Item2;
             var output = result.Item1;
-
-            // ///////////////////////////////////
-            TemplateGeneratorUtils.SetTemplateGenerator(setting, host);
-            // ///////////////////////////////////
+            //if (output == null) { return new CompilerErrorCollection(); } // for debug
             
             var outFileName = Path.GetFileNameWithoutExtension(templateFileName);
             var outFilePath = Path.Combine(templateDir, outFileName + host.FileExtension);
