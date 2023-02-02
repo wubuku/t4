@@ -89,9 +89,9 @@ namespace Mono.TextTemplating
             Refs.Add (typeof (global::T4Toolbox.VisualStudio.TransformationContextProvider).Assembly.Location);
             
             AddDirectiveProcessor(
-                "T4Toolbox.TransformationContextProcesso", 
-                "T4Toolbox.DirectiveProcessors.DirectiveProcessor",
-                typeof (global::T4Toolbox.VisualStudio.TransformationContextProvider).Assembly.FullName
+                "T4Toolbox.TransformationContextProcessor", 
+                "T4Toolbox.DirectiveProcessors.TransformationContextProcessor",
+                typeof (global::T4Toolbox.DirectiveProcessors.TransformationContextProcessor).Assembly.FullName
             );
 
             if (string.IsNullOrEmpty(templateFile))
