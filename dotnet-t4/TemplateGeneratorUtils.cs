@@ -8,19 +8,19 @@ namespace Mono.TextTemplating
 	{
 		public class TemplateGeneratorSetting
 		{
-			IList<string> generatorRefs;
-			private IList<string> generatorImports;
-			private IList<string> generatorIncludePaths;
-			private IList<string> generatorReferencePaths;
-			private IDictionary<string, KeyValuePair<string, string>> directiveProcessors;
-			private IDictionary<Tuple<string, string, string>, string> generatorParameters;
+			IList<string> _generatorRefs;
+			private IList<string> _generatorImports;
+			private IList<string> _generatorIncludePaths;
+			private IList<string> _generatorReferencePaths;
+			private IDictionary<string, KeyValuePair<string, string>> _directiveProcessors;
+			private IDictionary<Tuple<string, string, string>, string> _generatorParameters;
 
-			public IList<string> GeneratorRefs { get => generatorRefs; set => generatorRefs = value; }
-			public IList<string> GeneratorImports { get => generatorImports; set => generatorImports = value; }
-			public IList<string> GeneratorIncludePaths { get => generatorIncludePaths; set => generatorIncludePaths = value; }
-			public IList<string> GeneratorReferencePaths { get => generatorReferencePaths; set => generatorReferencePaths = value; }
-			public IDictionary<string, KeyValuePair<string, string>> DirectiveProcessors { get => directiveProcessors; set => directiveProcessors = value; }
-			public IDictionary<Tuple<string, string, string>, string> GeneratorParameters { get => generatorParameters; set => generatorParameters = value; }
+			public IList<string> GeneratorRefs { get => _generatorRefs; set => _generatorRefs = value; }
+			public IList<string> GeneratorImports { get => _generatorImports; set => _generatorImports = value; }
+			public IList<string> GeneratorIncludePaths { get => _generatorIncludePaths; set => _generatorIncludePaths = value; }
+			public IList<string> GeneratorReferencePaths { get => _generatorReferencePaths; set => _generatorReferencePaths = value; }
+			public IDictionary<string, KeyValuePair<string, string>> DirectiveProcessors { get => _directiveProcessors; set => _directiveProcessors = value; }
+			public IDictionary<Tuple<string, string, string>, string> GeneratorParameters { get => _generatorParameters; set => _generatorParameters = value; }
 
 			public TemplateGeneratorSetting (
 				IList<string> generatorRefs,
@@ -30,12 +30,12 @@ namespace Mono.TextTemplating
 				IDictionary<string, KeyValuePair<string, string>> directiveProcessors,
 				IDictionary<Tuple<string, string, string>, string> generatorParameters)
 			{
-				this.generatorRefs = generatorRefs;
-				this.generatorImports = generatorImports;
-				this.generatorIncludePaths = generatorImports;
-				this.generatorReferencePaths = generatorReferencePaths;
-				this.directiveProcessors = directiveProcessors;
-				this.generatorParameters = generatorParameters;
+				this._generatorRefs = generatorRefs;
+				this._generatorImports = generatorImports;
+				this._generatorIncludePaths = generatorIncludePaths;
+				this._generatorReferencePaths = generatorReferencePaths;
+				this._directiveProcessors = directiveProcessors;
+				this._generatorParameters = generatorParameters;
 			}
 		}
 
