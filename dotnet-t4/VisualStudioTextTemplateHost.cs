@@ -156,8 +156,37 @@ namespace Mono.TextTemplating
 
         protected override string ResolvePath (string path)
 		{
-            //todo ...
+            if (!String.IsNullOrEmpty(path) && path.TrimStart().StartsWith("$("))
+            {
+                var varEndIdx = path.IndexOf(")");
+                var varStartIdx = path.IndexOf("$(") + 2;
+                var varName = path.Substring(varStartIdx, varEndIdx - varStartIdx);
+                var varVal = this._resolver.ResolveVariable(varName).FirstOrDefault();
+                var remaining = path.Substring(varEndIdx + 1);
+                if (!String.IsNullOrEmpty(varVal)) 
+                {
+                    remaining = remaining.Replace("\\", Path.DirectorySeparatorChar.ToString());
+                    if (remaining.StartsWith(Path.DirectorySeparatorChar)) 
+                    {
+                        remaining = remaining.Substring(1);
+                    }
+                    path = Path.Combine(varVal, remaining);
+                }
+            }
             return base.ResolvePath(path);
+        }
+
+        protected override string ResolveAssemblyReference (string assemblyReference)
+		{
+           	if (!String.IsNullOrEmpty(assemblyReference) && assemblyReference.TrimStart().StartsWith("%")) 
+            {
+                assemblyReference = assemblyReference.Replace("\\", Path.DirectorySeparatorChar.ToString());
+				assemblyReference = Environment.ExpandEnvironmentVariables (assemblyReference);
+			}
+            var resolvedRef = base.ResolveAssemblyReference(assemblyReference);
+            //todo replace some specific references...
+
+            return resolvedRef;
         }
 
         #region Implements ITextTemplatingComponents

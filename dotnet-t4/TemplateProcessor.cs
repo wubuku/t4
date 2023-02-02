@@ -123,6 +123,7 @@ namespace Mono.TextTemplating
                     // }
 
                     if (pt.Errors.Count > 0) {
+                        //todo filter errors?
                         generator.Errors.AddRange (pt.Errors);
                     }
 
@@ -131,7 +132,7 @@ namespace Mono.TextTemplating
                     //     AddCoercedSessionParameters (generator, pt, properties);
                     // }
 
-                    //Console.WriteLine("about to process template: " + templateFileName);
+                    //Console.WriteLine("about to process template: " + templateFileName);// for debug
                     //if (true) { return new Tuple<string, VisualStudioTextTemplateHost>(null, generator); } // for debug
                     
                     string outputFile = null;
@@ -161,7 +162,8 @@ namespace Mono.TextTemplating
                     // 			outputFile = Path.ChangeExtension (outputFile, settings.Provider.FileExtension);
                     // 		}
                     // 	}
-                    // }                    
+                    // }          
+                    //todo check errors...          
                     return Tuple.Create(outputContent, generator);
                 }
             }
