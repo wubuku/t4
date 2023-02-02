@@ -154,6 +154,12 @@ namespace Mono.TextTemplating
 		}
 
 
+        protected override string ResolvePath (string path)
+		{
+            //todo ...
+            return base.ResolvePath(path);
+        }
+
         #region Implements ITextTemplatingComponents
 
         // private TextTemplatingCallback _textTemplatingCallback;
