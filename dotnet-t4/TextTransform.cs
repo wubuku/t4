@@ -62,7 +62,6 @@ namespace Mono.TextTemplating
 				ShowHelp (true);
 			}
 
-			//todo new VisualStudioTextTemplateHost ();
 			string outputFile = null, inputFile = null;
 			var properties = new Dictionary<string, string> ();
 			string preprocessClassName = null;
@@ -350,28 +349,7 @@ namespace Mono.TextTemplating
 
 		static void LogErrors (TemplateGenerator generator)
 		{
-			foreach (CompilerError err in generator.Errors) {
-				var oldColor = Console.ForegroundColor;
-				Console.ForegroundColor = err.IsWarning? ConsoleColor.Yellow : ConsoleColor.Red;
-				if (!string.IsNullOrEmpty (err.FileName)) {
-					Console.Error.Write (err.FileName);
-				}
-				if (err.Line > 0) {
-					Console.Error.Write ("(");
-					Console.Error.Write (err.Line);
-					if (err.Column > 0) {
-						Console.Error.Write (",");
-						Console.Error.Write (err.Column);
-					}
-					Console.Error.Write (")");
-				}
-				if (!string.IsNullOrEmpty (err.FileName) || err.Line > 0) {
-					Console.Error.Write (": ");
-				}
-				Console.Error.Write (err.IsWarning ? "WARNING: " : "ERROR: ");
-				Console.Error.WriteLine (err.ErrorText);
-				Console.ForegroundColor = oldColor;
-			}
+			ErrorsUtils.LogErrors(generator.Errors);
 		}
 
 		static void ShowHelp (bool concise)

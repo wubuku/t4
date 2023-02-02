@@ -35,6 +35,7 @@ using Microsoft.VisualStudio.TextTemplating;
 using Microsoft.VisualStudio.TextTemplating.VSHost;
 using T4Toolbox;
 using Mono.TextTemplating.Properties;
+using System.Text.RegularExpressions;
 
 namespace Mono.TextTemplating
 {
@@ -176,6 +177,13 @@ namespace Mono.TextTemplating
             return base.ResolvePath(path);
         }
 
+        // ////////////////////////////////////////
+        private static readonly IList<Regex> DddmlSpecificAssemblyReferenceRegexList = new Regex[] {
+            new Regex(@"^Dddml\.[^\\\/]*\.dll$"),
+            new Regex(@"^YamlDotNet.*\.dll$"),
+        };
+        // ////////////////////////////////////////
+
         protected override string ResolveAssemblyReference (string assemblyReference)
 		{
            	if (!String.IsNullOrEmpty(assemblyReference) && assemblyReference.TrimStart().StartsWith("%")) 
@@ -184,8 +192,20 @@ namespace Mono.TextTemplating
 				assemblyReference = Environment.ExpandEnvironmentVariables (assemblyReference);
 			}
             var resolvedRef = base.ResolveAssemblyReference(assemblyReference);
-            //todo replace some specific references...
-
+            // replace some specific references...
+            if (!String.IsNullOrEmpty(resolvedRef)) 
+            {
+                if (!File.Exists(resolvedRef))
+                {
+                    var fileName = Path.GetFileName(resolvedRef);
+                    var regex = DddmlSpecificAssemblyReferenceRegexList.Where(r => r.Match(fileName).Success).FirstOrDefault();
+                    if (regex != null) 
+                    {
+                        //try again
+                        resolvedRef = base.ResolveAssemblyReference(fileName);
+                    }
+                }
+            }
             return resolvedRef;
         }
 

@@ -123,8 +123,12 @@ namespace Mono.TextTemplating
                     // }
 
                     if (pt.Errors.Count > 0) {
-                        //todo filter errors?
                         generator.Errors.AddRange (pt.Errors);
+                        FilterErrors(generator);
+                        if (generator.Errors.HasErrors) 
+                        {
+                            return Tuple.Create((string)null, generator);
+                        }
                     }
 
                     string outputContent = null;
@@ -162,8 +166,8 @@ namespace Mono.TextTemplating
                     // 			outputFile = Path.ChangeExtension (outputFile, settings.Provider.FileExtension);
                     // 		}
                     // 	}
-                    // }          
-                    //todo check errors...          
+                    // }      
+                    //FilterErrors(generator); //not check errors??   
                     return Tuple.Create(outputContent, generator);
                 }
             }
@@ -216,10 +220,18 @@ namespace Mono.TextTemplating
                 }
             }
 
-            var result = ProcessTemplateInMemory(dte, templateFileName, resolver, setting);
+            var result = ProcessTemplateInMemory(dte, templateFileName, resolver, setting);            
             var host = result.Item2;
             var output = result.Item1;
             //if (output == null) { return new CompilerErrorCollection(); } // for debug
+            var filteredErrors = GetFilteredHostErrors(host);
+            if (filteredErrors.HasErrors) {
+                return filteredErrors;
+            }
+            if (output == null) 
+            {
+                throw new NullReferenceException("Got null output content.");
+            }
             
             var outFileName = Path.GetFileNameWithoutExtension(templateFileName);
             var outFilePath = Path.Combine(templateDir, outFileName + host.FileExtension);
@@ -232,11 +244,17 @@ namespace Mono.TextTemplating
             }
             File.WriteAllText(outFilePath, output, host.FileEncoding);
             // //////////////////////
-            var filteredErrors = GetFilteredHostErrors(host);
             return filteredErrors;
         }
 
-        private static CompilerErrorCollection GetFilteredHostErrors(VisualStudioTextTemplateHost host)
+        private static void FilterErrors(VisualStudioTextTemplateHost host) 
+        {
+            var errors = TemplateProcessor.GetFilteredHostErrors(host);
+            host.Errors.Clear();
+            host.Errors.AddRange(errors);
+        }
+
+        internal static CompilerErrorCollection GetFilteredHostErrors(VisualStudioTextTemplateHost host)
         {
             var filteredErrors = new CompilerErrorCollection();
             if (host.Errors != null)
@@ -291,7 +309,7 @@ namespace Mono.TextTemplating
                     dte.Solution.Open(solutionFileName);
 
                     Source.TraceEvent(TraceEventType.Verbose, 0, Resources.Program_Main_Finding_and_processing___tt_templates___);
-                    var firstError =
+                    var firstErroredTemplate =
                         FindTemplates(Path.GetDirectoryName(solutionFileName))
                             .Where(t => MatchPatterns(t, fileNamePatterns))
                             .Select(t =>
@@ -309,11 +327,18 @@ namespace Mono.TextTemplating
                             .Where(t => t != null)
                             .FirstOrDefault(tuple => tuple.Item2.Count > 0);
 
-                    if (firstError != null)
+                    if (firstErroredTemplate != null)
                     {
+
+                        if (firstErroredTemplate.Item2.HasErrors) {
+                            Console.Error.WriteLine (firstErroredTemplate.Item1 == null ? "Processing failed." : $"Processing '{firstErroredTemplate.Item1}' failed.");
+                        }
+                        
+                        ErrorsUtils.LogErrors(firstErroredTemplate.Item2);
+
                         Source.TraceEvent(TraceEventType.Warning, 0, Resources.Program_Main_FAILED_to_process___0__,
-                            firstError.Item1);
-                        foreach (var error in firstError.Item2)
+                            firstErroredTemplate.Item1);
+                        foreach (var error in firstErroredTemplate.Item2)
                         {
                             Source.TraceEvent(TraceEventType.Error, 0, Resources.Program_Main_, error);
                         }
