@@ -84,6 +84,7 @@ namespace Mono.TextTemplating
         public VisualStudioTextTemplateHost(string templateFile, DTE2 dte, IVariableResolver resolver, Project project)
         {
             Refs.Add (typeof (CompilerErrorCollection).Assembly.Location);
+            Refs.Add (typeof (global::Microsoft.VisualStudio.TextTemplating.VSHost.TextTemplatingCallback).Assembly.Location);
             Refs.Add (typeof (global::T4Toolbox.Template).Assembly.Location);
             Refs.Add (typeof (global::T4Toolbox.DirectiveProcessors.DirectiveProcessor).Assembly.Location);
             Refs.Add (typeof (global::T4Toolbox.EnvDteLites.DTELite).Assembly.Location);

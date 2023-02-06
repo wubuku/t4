@@ -32,38 +32,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="17.3.2" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Reference Include="T4Toolbox.Lites.VisualStudio.Interfaces">
-      <HintPath>../../../../GitHub/VisualStudioTextTransform/src/VisualStudio.Interfaces/bin/Debug/netstandard2.0/T4Toolbox.Lites.VisualStudio.Interfaces.dll</HintPath>
-    </Reference>
+    <!-- <PackageReference Include="Microsoft.Build" Version="17.3.2" /> -->
+    <!-- <PackageReference Include="T4Toolbox.Lites.VisualStudio.Interfaces" Version="0.0.2" />
+    <PackageReference Include="T4Toolbox.Lites.VSTextTemplating.Mono" Version="0.0.1" />
+    <PackageReference Include="T4Toolbox.Mono" Version="0.0.1" />
+    <PackageReference Include="T4Toolbox.DirectiveProcessors.Mono" Version="0.0.1" />
+    <PackageReference Include="T4Toolbox.EnvDteLites" Version="0.0.1" /> -->
+    <PackageReference Include="T4Toolbox.Lites.VisualStudio.Mono" Version="0.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="T4Toolbox.VSTextTemplating">
-      <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox.VSTextTemplating/bin/Debug/netstandard2.0/T4Toolbox.VSTextTemplating.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="T4Toolbox">
-      <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox/bin/Debug/netstandard2.0/T4Toolbox.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="T4Toolbox.EnvDteLites">
-      <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox.EnvDteLites/bin/Debug/net6.0/T4Toolbox.EnvDteLites.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="T4Toolbox.DirectiveProcessors">
-      <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox.DirectiveProcessors/bin/Debug/netstandard2.0/T4Toolbox.DirectiveProcessors.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="T4Toolbox.VisualStudio">
-      <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox.VisualStudio/bin/Debug/net6.0/T4Toolbox.VisualStudio.dll</HintPath>
-    </Reference>
-  </ItemGroup>
 </Project>
