@@ -26,8 +26,9 @@
 
 using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Globalization;
-
+using System.Reflection;
 using Microsoft.VisualStudio.TextTemplating;
 using Mono.TextTemplating.CodeCompilation;
 
@@ -48,6 +49,8 @@ namespace Mono.TextTemplating
 
 		internal string[] ReferencedAssemblyFiles { get; }
 
+		internal IDictionary<string, Assembly> HostContextAssemblies { get; }
+
 		[Obsolete ("Should not have been public")]
 		public CompiledTemplate (ITextTemplatingEngineHost host, CompilerResults results, string fullName, CultureInfo culture, string[] assemblyFiles) => throw new NotSupportedException ();
 
@@ -58,18 +61,19 @@ namespace Mono.TextTemplating
 			this.templateAssemblyFile = templateAssemblyFile;
 		}
 
-		internal CompiledTemplate (ITextTemplatingEngineHost host, CompiledAssemblyData templateAssemblyData, string fullName, CultureInfo culture, string[] referencedAssemblyFiles)
-			: this (fullName, host, culture, referencedAssemblyFiles)
+		internal CompiledTemplate (ITextTemplatingEngineHost host, CompiledAssemblyData templateAssemblyData, string fullName, CultureInfo culture, string[] referencedAssemblyFiles, IDictionary<string, Assembly> hostContextAssemblies = null)
+			: this (fullName, host, culture, referencedAssemblyFiles, hostContextAssemblies)
 		{
 			this.templateAssemblyData = templateAssemblyData;
 		}
 
-		CompiledTemplate (string templateClassFullName, ITextTemplatingEngineHost host, CultureInfo culture, string[] referencedAssemblyFiles)
+		CompiledTemplate (string templateClassFullName, ITextTemplatingEngineHost host, CultureInfo culture, string[] referencedAssemblyFiles, IDictionary<string, Assembly> hostContextAssemblies = null)
 		{
 			this.templateClassFullName = templateClassFullName;
 			this.host = host;
 			this.culture = culture;
 			this.ReferencedAssemblyFiles = referencedAssemblyFiles;
+			this.HostContextAssemblies = hostContextAssemblies;
 		}
 
 #if FEATURE_APPDOMAINS
@@ -107,7 +111,7 @@ namespace Mono.TextTemplating
 		public string Process ()
 		{
 			TemplateProcessor processor = CreateTemplateProcessor ();
-			return processor.CreateAndProcess (host, templateAssemblyData, templateAssemblyFile, templateClassFullName, culture, ReferencedAssemblyFiles);
+			return processor.CreateAndProcess (host, templateAssemblyData, templateAssemblyFile, templateClassFullName, culture, ReferencedAssemblyFiles, HostContextAssemblies);
 		}
 
 		public void Dispose ()

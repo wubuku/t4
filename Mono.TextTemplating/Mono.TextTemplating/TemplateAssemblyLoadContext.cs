@@ -8,6 +8,7 @@ using System.CodeDom.Compiler;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Collections.Generic;
 
 using Microsoft.VisualStudio.TextTemplating;
 
@@ -23,7 +24,9 @@ namespace Mono.TextTemplating
 		readonly AssemblyName textTemplatingAsmName;
 		readonly AssemblyName hostAsmName;
 
-		public TemplateAssemblyLoadContext (string[] templateAssemblyFiles, ITextTemplatingEngineHost host)
+		readonly IDictionary<string, Assembly> hostContextAssemblies;
+
+		public TemplateAssemblyLoadContext (string[] templateAssemblyFiles, ITextTemplatingEngineHost host, IDictionary<string, Assembly> hostContextAssemblies = null)
 #if NETCOREAPP3_0_OR_GREATER
 			: base (isCollectible: true)
 #endif
@@ -35,6 +38,8 @@ namespace Mono.TextTemplating
 			codeDomAsmName = typeof (CompilerErrorCollection).Assembly.GetName ();
 			textTemplatingAsmName = typeof (TemplateGenerator).Assembly.GetName ();
 			hostAsmName = hostAssembly.GetName ();
+
+			this.hostContextAssemblies = hostContextAssemblies;
 		}
 
 		protected override Assembly Load (AssemblyName assemblyName)
@@ -51,6 +56,14 @@ namespace Mono.TextTemplating
 			// the host may be a custom host, and must also be in the same context
 			if (assemblyName.Name == hostAsmName.Name) {
 				return hostAssembly;
+			}
+
+			if (hostContextAssemblies != null) 
+			{
+				if (hostContextAssemblies.ContainsKey(assemblyName.Name))
+				{
+					return hostContextAssemblies[assemblyName.Name];
+				} 
 			}
 
 			for (int i = 0; i < templateAssemblyFiles.Length; i++) {

@@ -158,7 +158,7 @@ namespace Mono.TextTemplating
 
                     // if (!generator.Errors.HasErrors) {
                     // 	if (preprocessClassName == null) {
-                    (outputFile, outputContent) = generator.ProcessTemplateAsync (pt, inputFile, inputContent, outputFile, settings).Result;
+                    (outputFile, outputContent) = generator.ProcessTemplateAsync (pt, inputFile, inputContent, outputFile, settings, default(CancellationToken), generator.HostContextAssemblies).Result;
                     // 	} else {
                     // 		SplitClassName (preprocessClassName, settings);
                     // 		outputContent = generator.PreprocessTemplate (pt, inputFile, inputContent, settings, out _);

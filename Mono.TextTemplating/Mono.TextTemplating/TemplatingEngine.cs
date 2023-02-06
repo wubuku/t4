@@ -83,9 +83,9 @@ namespace Mono.TextTemplating
 			return tpl?.Process ();
 		}
 
-		public async Task<string> ProcessTemplateAsync (ParsedTemplate pt, string content, TemplateSettings settings, ITextTemplatingEngineHost host, CancellationToken token = default)
+		public async Task<string> ProcessTemplateAsync (ParsedTemplate pt, string content, TemplateSettings settings, ITextTemplatingEngineHost host, CancellationToken token = default, IDictionary<string, Assembly> hostContextAssemblies = null)
 		{
-			var tpl = await CompileTemplateAsync (pt, content, host, settings, token).ConfigureAwait (false);
+			var tpl = await CompileTemplateAsync (pt, content, host, settings, token, hostContextAssemblies).ConfigureAwait (false);
 			using (tpl?.template) {
 				return tpl?.template.Process ();
 			}
@@ -234,14 +234,15 @@ namespace Mono.TextTemplating
 			string content,
 			ITextTemplatingEngineHost host,
 			TemplateSettings settings = null,
-			CancellationToken token = default)
+			CancellationToken token = default,
+			IDictionary<string, Assembly> hostContextAssemblies = null)
 		{
 			if (pt == null)
 				throw new ArgumentNullException (nameof (pt));
 			if (host == null)
 				throw new ArgumentNullException (nameof (host));
 
-			return CompileTemplateInternal (pt, content, host, settings, token);
+			return CompileTemplateInternal (pt, content, host, settings, token, hostContextAssemblies);
 		}
 
 		async Task<(CompiledTemplate template, string[] references)?> CompileTemplateInternal (
@@ -249,7 +250,8 @@ namespace Mono.TextTemplating
 			string content,
 			ITextTemplatingEngineHost host,
 			TemplateSettings settings,
-			CancellationToken token
+			CancellationToken token,
+			IDictionary<string, Assembly> hostContextAssemblies = null
 			)
 		{
 
@@ -281,7 +283,7 @@ namespace Mono.TextTemplating
 				return null;
 			}
 
-			var compiledTemplate = new CompiledTemplate (host, assembly, settings.GetFullName (), settings.Culture, references);
+			var compiledTemplate = new CompiledTemplate (host, assembly, settings.GetFullName (), settings.Culture, references, hostContextAssemblies);
 #if FEATURE_APPDOMAINS
 			compiledTemplate.SetTemplateContentForAppDomain (content);
 #endif

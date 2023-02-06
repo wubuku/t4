@@ -262,11 +262,12 @@ namespace Mono.TextTemplating
 			string inputContent,
 			string outputFileName,
 			TemplateSettings settings,
-			CancellationToken token = default)
+			CancellationToken token = default,
+			IDictionary<string, Assembly> hostContextAssemblies = null)
 		{
 			InitializeForRun (inputFileName, outputFileName);
 
-			var outputContent = await Engine.ProcessTemplateAsync (pt, inputContent, settings, this, token).ConfigureAwait (false);
+			var outputContent = await Engine.ProcessTemplateAsync (pt, inputContent, settings, this, token, hostContextAssemblies).ConfigureAwait (false);
 
 			return (OutputFile, outputContent);
 		}

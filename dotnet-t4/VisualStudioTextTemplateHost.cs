@@ -81,15 +81,14 @@ namespace Mono.TextTemplating
 
         private ITransformationContextProvider _transformationContextProvider;
 
+        IDictionary<string, Assembly> _hostContextAssemblies = null;
+
+        public IDictionary<string, Assembly> HostContextAssemblies { get => _hostContextAssemblies; }
+
         public VisualStudioTextTemplateHost(string templateFile, DTE2 dte, IVariableResolver resolver, Project project)
         {
             Refs.Add (typeof (CompilerErrorCollection).Assembly.Location);
-            Refs.Add (typeof (global::Microsoft.VisualStudio.TextTemplating.VSHost.TextTemplatingCallback).Assembly.Location);
-            Refs.Add (typeof (global::T4Toolbox.Template).Assembly.Location);
-            Refs.Add (typeof (global::T4Toolbox.DirectiveProcessors.DirectiveProcessor).Assembly.Location);
-            Refs.Add (typeof (global::T4Toolbox.EnvDteLites.DTELite).Assembly.Location);
-            Refs.Add (typeof (global::T4Toolbox.VisualStudio.TransformationContextProvider).Assembly.Location);
-            
+            InitHostContextAssemblies();
             AddDirectiveProcessor(
                 "T4Toolbox.TransformationContextProcessor", 
                 "T4Toolbox.DirectiveProcessors.TransformationContextProcessor",
@@ -116,6 +115,20 @@ namespace Mono.TextTemplating
             Debug.Assert(directoryName != null, "directoryName != null, don't expect templateFile to be a root directory!");
             _templateDir = Path.GetFullPath(directoryName);
             _project = project;
+        }
+
+        private void InitHostContextAssemblies() 
+        {
+            var assemblies = new List<Assembly>();
+            assemblies.Add (typeof (global::Microsoft.VisualStudio.TextTemplating.VSHost.TextTemplatingCallback).Assembly);
+            assemblies.Add (typeof (global::T4Toolbox.Template).Assembly);
+            assemblies.Add (typeof (global::T4Toolbox.DirectiveProcessors.TransformationContextProcessor).Assembly);
+            assemblies.Add (typeof (global::T4Toolbox.EnvDteLites.DTELite).Assembly);
+            assemblies.Add (typeof (global::T4Toolbox.VisualStudio.TransformationContextProvider).Assembly);
+            
+            _hostContextAssemblies = new Dictionary<string, Assembly>();
+            assemblies.ForEach(a => _hostContextAssemblies.Add(a.GetName().Name, a));
+            Refs.AddRange(assemblies.Select(a => a.Location));
         }
 
 		protected override ITextTemplatingSession CreateSession () => new ToolTemplateSession (this);
@@ -212,24 +225,22 @@ namespace Mono.TextTemplating
 
         #region Implements ITextTemplatingComponents
 
-        // private TextTemplatingCallback _textTemplatingCallback;
+        private TextTemplatingCallback _textTemplatingCallback;
 
         ITextTemplatingCallback ITextTemplatingComponents.Callback
         {
             get
             {
-                // if (_textTemplatingCallback == null)
-                // {
-                //     var callback = CreateTextTemplatingCallback();
-                //     _textTemplatingCallback = callback;
-                // }
-                // return _textTemplatingCallback;
-				throw new NotImplementedException();
+                if (_textTemplatingCallback == null)
+                {
+                    var callback = new TextTemplatingCallback();
+                    _textTemplatingCallback = callback;
+                }
+                return _textTemplatingCallback;
             }
             set
             {
-                // _textTemplatingCallback = (TextTemplatingCallback)value;
-				throw new NotImplementedException();
+                _textTemplatingCallback = (TextTemplatingCallback)value;
             }
         }
 

@@ -18,7 +18,8 @@ namespace Mono.TextTemplating
 
 		int IVsBuildPropertyStorage.GetItemAttribute (uint item, string pszAttributeName, out string pbstrAttributeValue)
 		{
-			throw new NotImplementedException ();
+			pbstrAttributeValue = null;
+            return 0;
 		}
 
 		int IVsBuildPropertyStorage.GetPropertyValue(string pszPropName, string pszConfigName, uint storage, out string pbstrPropValue)

@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Collections.Generic;
 
 using Microsoft.VisualStudio.TextTemplating;
 using Mono.TextTemplating.CodeCompilation;
@@ -16,7 +17,7 @@ partial class CompiledTemplate
 	{
 #if FEATURE_ASSEMBLY_LOAD_CONTEXT
 		readonly TemplateAssemblyLoadContext templateContext;
-		public TemplateAssemblyContext (ITextTemplatingEngineHost host, string[] referenceAssemblyFiles) => templateContext = new (referenceAssemblyFiles, host);
+		public TemplateAssemblyContext (ITextTemplatingEngineHost host, string[] referenceAssemblyFiles, IDictionary<string, Assembly> hostContextAssemblies = null) => templateContext = new (referenceAssemblyFiles, host, hostContextAssemblies);
 		public Assembly LoadAssemblyFile (string assemblyPath) => templateContext.LoadFromAssemblyPath (assemblyPath);
 		public Assembly LoadInMemoryAssembly (CompiledAssemblyData assemblyData) => assemblyData.LoadInAssemblyLoadContext (templateContext);
 		public void Dispose () { }

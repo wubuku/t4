@@ -17,9 +17,9 @@ partial class CompiledTemplate
 	class TemplateProcessor : MarshalByRefObject
 	{
 		[SuppressMessage ("Performance", "CA1822:Mark members as static", Justification = "Needs to be an instance for MarshalByRefObject")]
-		public string CreateAndProcess (ITextTemplatingEngineHost host, CompiledAssemblyData templateAssemblyData, string templateAssemblyFile, string fullName, CultureInfo culture, string[] referencedAssemblyFiles)
+		public string CreateAndProcess (ITextTemplatingEngineHost host, CompiledAssemblyData templateAssemblyData, string templateAssemblyFile, string fullName, CultureInfo culture, string[] referencedAssemblyFiles, IDictionary<string, Assembly> hostContextAssemblies = null)
 		{
-			using var context = new TemplateAssemblyContext (host, referencedAssemblyFiles);
+			using var context = new TemplateAssemblyContext (host, referencedAssemblyFiles, hostContextAssemblies);
 
 			Assembly assembly = templateAssemblyData is not null
 				? context.LoadInMemoryAssembly (templateAssemblyData)
@@ -69,18 +69,24 @@ partial class CompiledTemplate
 			var initMethod = transformType.GetMethod ("Initialize");
 			var transformMethod = transformType.GetMethod ("TransformText");
 
+			var disposeMethod = transformType.GetMethod("Dispose");
+
 			if (initMethod == null) {
 				errorMethod.Invoke (textTransformation, new object[] { "Error running transform: no method Initialize()" });
 			} else if (transformMethod == null) {
 				errorMethod.Invoke (textTransformation, new object[] { "Error running transform: no method TransformText()" });
-			} else try {
+			} else if (disposeMethod == null) {
+				errorMethod.Invoke (textTransformation, new object[] { "Error running transform: no method Dispose()" });
+			} else {
+				try {
 					initMethod.Invoke (textTransformation, null);
 					output = (string)transformMethod.Invoke (textTransformation, null);
+					disposeMethod.Invoke (textTransformation, null);
 				}
 				catch (Exception ex) {
 					errorMethod.Invoke (textTransformation, new object[] { "Error running transform: " + ex });
 				}
-
+			}
 			host.LogErrors (errors);
 
 			ToStringHelper.FormatProvider = CultureInfo.InvariantCulture;
