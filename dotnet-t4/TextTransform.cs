@@ -164,7 +164,7 @@ namespace Mono.TextTemplating
 			string inputContent = null;
 			bool inputIsFromStdin = false;
 
-			if (remainingArgs.Count != 1) {
+			if (remainingArgs.Count == 0) { //if (remainingArgs.Count != 1) {
 				if (Console.IsInputRedirected) {
 					inputContent = Console.In.ReadToEnd ();
 					inputIsFromStdin = true;
@@ -204,8 +204,12 @@ namespace Mono.TextTemplating
 				// ///////////////////////////////////////////////
 				if (inputFile.EndsWith(".sln")) 
 				{
-					var ok = TemplateProcessor.ProcessSolution(inputFile, null, null, generatorSetting);
-					return ok ? 0 : 1;
+					if (remainingArgs.Count == 2) 
+					{
+						var templateFile = remainingArgs[1];
+						return TemplateProcessor.ProcessOneFileInSolution(inputFile, null, templateFile, generatorSetting) ? 0 : 1;
+					}
+					return TemplateProcessor.ProcessSolution(inputFile, null, null, generatorSetting) ? 0 : 1;
 				}
 				// ///////////////////////////////////////////////
 				try {

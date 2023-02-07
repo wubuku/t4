@@ -287,7 +287,22 @@ namespace Mono.TextTemplating
         /// </summary>
         /// <param name="solutionFileName"></param>
         /// <returns></returns>
+        public static bool ProcessOneFileInSolution(string solutionFileName, string targetDir, string fileName, TemplateGeneratorUtils.TemplateGeneratorSetting setting)
+        {
+            return ProcessSolution(solutionFileName, targetDir, t => fileName == t, setting);
+        }
+
+        /// <summary>
+        /// /
+        /// </summary>
+        /// <param name="solutionFileName"></param>
+        /// <returns></returns>
         public static bool ProcessSolution(string solutionFileName, string targetDir, ICollection<Regex> fileNamePatterns, TemplateGeneratorUtils.TemplateGeneratorSetting setting)
+        {
+            return ProcessSolution(solutionFileName, targetDir, t => MatchPatterns(t, fileNamePatterns), setting);
+        }
+
+        static bool ProcessSolution(string solutionFileName, string targetDir, Func<string, bool> fileFilter, TemplateGeneratorUtils.TemplateGeneratorSetting setting)
         {
             if (string.IsNullOrEmpty(solutionFileName) || !File.Exists(solutionFileName))
             {
@@ -311,7 +326,7 @@ namespace Mono.TextTemplating
                     Source.TraceEvent(TraceEventType.Verbose, 0, Resources.Program_Main_Finding_and_processing___tt_templates___);
                     var firstErroredTemplate =
                         FindTemplates(Path.GetDirectoryName(solutionFileName))
-                            .Where(t => MatchPatterns(t, fileNamePatterns))
+                            .Where(fileFilter)
                             .Select(t =>
                                     { 
                                         try
@@ -329,7 +344,6 @@ namespace Mono.TextTemplating
 
                     if (firstErroredTemplate != null)
                     {
-
                         if (firstErroredTemplate.Item2.HasErrors) {
                             Console.Error.WriteLine (firstErroredTemplate.Item1 == null ? "Processing failed." : $"Processing '{firstErroredTemplate.Item1}' failed.");
                         }
