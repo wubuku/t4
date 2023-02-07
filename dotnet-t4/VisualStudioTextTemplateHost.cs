@@ -192,7 +192,7 @@ namespace Mono.TextTemplating
         }
 
         // ////////////////////////////////////////
-        private static readonly IList<Regex> DddmlSpecificAssemblyReferenceRegexList = new Regex[] {
+        private static readonly IList<Regex> SpecificAssemblyReferenceRegexList = new Regex[] {
             new Regex(@"^Dddml\.[^\\\/]*\.dll$"),
             new Regex(@"^YamlDotNet.*\.dll$"),
         };
@@ -212,7 +212,7 @@ namespace Mono.TextTemplating
                 if (!File.Exists(resolvedRef))
                 {
                     var fileName = Path.GetFileName(resolvedRef);
-                    var regex = DddmlSpecificAssemblyReferenceRegexList.Where(r => r.Match(fileName).Success).FirstOrDefault();
+                    var regex = SpecificAssemblyReferenceRegexList.Where(r => r.Match(fileName).Success).FirstOrDefault();
                     if (regex != null) 
                     {
                         //try again
@@ -233,7 +233,7 @@ namespace Mono.TextTemplating
             {
                 if (_textTemplatingCallback == null)
                 {
-                    var callback = new TextTemplatingCallback();
+                    var callback = CreateTextTemplatingCallback();
                     _textTemplatingCallback = callback;
                 }
                 return _textTemplatingCallback;
@@ -244,24 +244,24 @@ namespace Mono.TextTemplating
             }
         }
 
-        // private TextTemplatingCallback CreateTextTemplatingCallback()
-        // {
-        //     var callback = new TextTemplatingCallback();
-        //     callback.Initialize();
-        //     if (this._outputEncoding != null)
-        //     {
-        //         callback.OutputEncoding = this._outputEncoding;
-        //     }
-        //     else
-        //     {
-        //         callback.SetOutputEncoding(Encoding.UTF8, false);
-        //     }
-        //     if (this._fileExtension != null)
-        //     {
-        //         callback.SetFileExtension(this._fileExtension);
-        //     }
-        //     return callback;
-        // }
+        private TextTemplatingCallback CreateTextTemplatingCallback()
+        {
+            var callback = new TextTemplatingCallback();
+            callback.Initialize();
+            if (this._outputEncoding != null)
+            {
+                callback.OutputEncoding = this._outputEncoding;
+            }
+            else
+            {
+                callback.SetOutputEncoding(Encoding.UTF8, false);
+            }
+            if (this._fileExtension != null)
+            {
+                callback.SetFileExtension(this._fileExtension);
+            }
+            return callback;
+        }
 
         ITextTemplatingEngine ITextTemplatingComponents.Engine
         {
