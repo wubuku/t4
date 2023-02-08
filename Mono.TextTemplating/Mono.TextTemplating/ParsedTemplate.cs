@@ -93,6 +93,9 @@ namespace Mono.TextTemplating
 		{
 			bool skip = false;
 			bool addToImportedHelpers = false;
+
+			var oldImportedHelperSegCount = importedHelperSegments.Count;
+			
 			while ((skip || tokeniser.Advance ()) && tokeniser.State != State.EOF) {
 				skip = false;
 				ISegment seg = null;
@@ -160,6 +163,33 @@ namespace Mono.TextTemplating
 						RawSegments.Add (seg);
 				}
 			}
+			// Remove the redundant blank lines.
+			if (isImport && addToImportedHelpers) {
+				var lastHelperSegIdx = -1;
+				for (var i = importedHelperSegments.Count - 1; i >= oldImportedHelperSegCount; i--) {
+					if (importedHelperSegments[i] is TemplateSegment tempSeg) {
+						if (tempSeg.Type == SegmentType.Helper) {
+							lastHelperSegIdx = i;
+							break;
+						}
+					}
+				}
+				if (lastHelperSegIdx != -1) {
+					for (var i = importedHelperSegments.Count -1; i > lastHelperSegIdx; i--) {	
+						if (importedHelperSegments[i] is TemplateSegment tempSeg) {
+							//if (tempSeg.Type != SegmentType.Helper)
+							if (tempSeg.Type == SegmentType.Content) {
+								if (String.IsNullOrWhiteSpace(tempSeg.Text)) {
+									importedHelperSegments.RemoveAt(i);
+								}
+								continue;
+							}
+							throw new InvalidOperationException("Add an incorrect non-helper segment to the tail of this.importedHelperSegments: " + tempSeg);
+						}
+					}
+				}
+			}
+
 			if (!isImport) {
 				AppendAnyImportedHelperSegments ();
 			}
