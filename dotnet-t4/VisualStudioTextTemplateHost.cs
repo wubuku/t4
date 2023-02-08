@@ -200,11 +200,7 @@ namespace Mono.TextTemplating
 
         protected override string ResolveAssemblyReference (string assemblyReference)
 		{
-           	if (!String.IsNullOrEmpty(assemblyReference) && assemblyReference.TrimStart().StartsWith("%")) 
-            {
-                assemblyReference = assemblyReference.Replace("\\", Path.DirectorySeparatorChar.ToString());
-				assemblyReference = Environment.ExpandEnvironmentVariables (assemblyReference);
-			}
+            assemblyReference = assemblyReference.Replace("\\", Path.DirectorySeparatorChar.ToString());
             var resolvedRef = base.ResolveAssemblyReference(assemblyReference);
             // replace some specific references...
             if (!String.IsNullOrEmpty(resolvedRef)) 

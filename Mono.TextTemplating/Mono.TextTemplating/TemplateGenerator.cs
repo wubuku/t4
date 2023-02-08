@@ -287,6 +287,10 @@ namespace Mono.TextTemplating
 
 		protected virtual string ResolveAssemblyReference (string assemblyReference)
 		{
+			if (!String.IsNullOrEmpty(assemblyReference) && assemblyReference.TrimStart().StartsWith("%")) {
+				assemblyReference = Environment.ExpandEnvironmentVariables (assemblyReference);
+			}
+
 			if (Path.IsPathRooted (assemblyReference))
 				return assemblyReference;
 			foreach (string referencePath in ReferencePaths) {

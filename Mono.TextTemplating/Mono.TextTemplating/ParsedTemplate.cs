@@ -163,35 +163,41 @@ namespace Mono.TextTemplating
 						RawSegments.Add (seg);
 				}
 			}
-			// Remove the redundant blank lines.
 			if (isImport && addToImportedHelpers) {
-				var lastHelperSegIdx = -1;
-				for (var i = importedHelperSegments.Count - 1; i >= oldImportedHelperSegCount; i--) {
-					if (importedHelperSegments[i] is TemplateSegment tempSeg) {
-						if (tempSeg.Type == SegmentType.Helper) {
-							lastHelperSegIdx = i;
-							break;
-						}
-					}
-				}
-				if (lastHelperSegIdx != -1) {
-					for (var i = importedHelperSegments.Count -1; i > lastHelperSegIdx; i--) {	
-						if (importedHelperSegments[i] is TemplateSegment tempSeg) {
-							//if (tempSeg.Type != SegmentType.Helper)
-							if (tempSeg.Type == SegmentType.Content) {
-								if (String.IsNullOrWhiteSpace(tempSeg.Text)) {
-									importedHelperSegments.RemoveAt(i);
-								}
-								continue;
-							}
-							throw new InvalidOperationException("Add an incorrect non-helper segment to the tail of this.importedHelperSegments: " + tempSeg);
-						}
-					}
-				}
+				RemoveRedundantBlankLines (this.importedHelperSegments, oldImportedHelperSegCount);
 			}
 
 			if (!isImport) {
+				RemoveRedundantBlankLines(this.RawSegments, 0);
 				AppendAnyImportedHelperSegments ();
+			}
+		}
+
+		// Remove the redundant blank lines.
+		private static void RemoveRedundantBlankLines (IList<ISegment>importedHelperSegments, int fromIndex)
+		{
+			var lastHelperSegIdx = -1;
+			for (var i = importedHelperSegments.Count - 1; i >= fromIndex; i--) {
+				if (importedHelperSegments[i] is TemplateSegment tempSeg) {
+					if (tempSeg.Type == SegmentType.Helper) {
+						lastHelperSegIdx = i;
+						break;
+					}
+				}
+			}
+			if (lastHelperSegIdx != -1) {
+				for (var i = importedHelperSegments.Count - 1; i > lastHelperSegIdx; i--) {
+					if (importedHelperSegments[i] is TemplateSegment tempSeg) {
+						//if (tempSeg.Type != SegmentType.Helper)
+						if (tempSeg.Type == SegmentType.Content) {
+							if (String.IsNullOrWhiteSpace (tempSeg.Text)) {
+								importedHelperSegments.RemoveAt (i);
+							}
+							continue;
+						}
+						throw new InvalidOperationException ("Add an incorrect non-helper segment to the tail of this.importedHelperSegments: " + tempSeg);
+					}
+				}
 			}
 		}
 
