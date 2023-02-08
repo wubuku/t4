@@ -250,10 +250,10 @@ namespace Mono.TextTemplating
 			string inputFile,
 			string inputContent,
 			TemplateSettings settings,
-			out string[] references)
+			out string[] references, bool noPreprocessingHelpers = false)
 		{
 			InitializeForRun (inputFileName: inputFile);
-			return TemplatingEngine.PreprocessTemplate (pt, inputContent, settings, this, out references);
+			return TemplatingEngine.PreprocessTemplate (pt, inputContent, settings, this, out references, noPreprocessingHelpers);
 		}
 
 		public async Task<(string fileName, string content)> ProcessTemplateAsync (

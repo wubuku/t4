@@ -68,6 +68,8 @@ namespace Mono.TextTemplating
 			bool debug = false;
 			bool verbose = false;
 
+			bool noPreprocessingHelpers = false;
+
 			List<string> generatorRefs = new ();
 			List<string> generatorImports = new ();
 			List<string> generatorIncludePaths = new ();
@@ -126,6 +128,11 @@ namespace Mono.TextTemplating
 					"v|verbose",
 					"Output additional diagnostic information to stdout.",
 					s => verbose = true
+				},
+				{
+					"NoPreprocessingHelpers",
+					"NO Preprocessing-Helpers will be added in preprocessed runtime template.",
+					s => noPreprocessingHelpers = true
 				},
 				{
 					"h|?|help",
@@ -253,7 +260,7 @@ namespace Mono.TextTemplating
 					(outputFile, outputContent) = generator.ProcessTemplateAsync (pt, inputFile, inputContent, outputFile, settings).Result;
 				} else {
 					SplitClassName (preprocessClassName, settings);
-					outputContent = generator.PreprocessTemplate (pt, inputFile, inputContent, settings, out _);
+					outputContent = generator.PreprocessTemplate (pt, inputFile, inputContent, settings, out _, noPreprocessingHelpers);
 					if (isDefaultOutputFilename) {
 						outputFile = Path.ChangeExtension (outputFile, settings.Provider.FileExtension);
 					}
