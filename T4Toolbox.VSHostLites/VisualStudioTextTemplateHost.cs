@@ -43,13 +43,6 @@ namespace T4Toolbox.VSHostLites
         private const string FileProtocol = "file:///";
         private static readonly TraceSource Source = new TraceSource("Mono.TextTemplating.VisualStudioTextTemplateHost");
 
-        // ////////////////////////////////////////
-        private static readonly IList<Regex> SpecificAssemblyReferenceRegexList = new Regex[] {
-            new Regex(@"^Dddml\.[^\\\/]*\.dll$"),
-            new Regex(@"^YamlDotNet.*\.dll$"),
-        };
-        // ////////////////////////////////////////
-
         protected override ITextTemplatingSession CreateSession() => new ToolTemplateSession(this);
 
         //private readonly string _templateFile; //base.TemplateFile
@@ -186,15 +179,15 @@ namespace T4Toolbox.VSHostLites
             
             var assemblies = new List<Assembly>();
 
-            // {"System.Core", 
+            // "System.Core", 
             assemblies.Add(typeof(System.Linq.Enumerable).Assembly);
-			// { "System.Data", 
+			// "System.Data", 
             assemblies.Add(typeof(System.Data.DataTable).Assembly);
-			// { "System.Linq", 
+			// "System.Linq", 
             assemblies.Add(typeof(System.Linq.Enumerable).Assembly);
-			// { "System.Xml", 
+			// "System.Xml", 
             //assemblies.Add(typeof(System.Xml.XmlAttribute).Assembly);
-			// { "System.Xml.Linq", 
+			// "System.Xml.Linq", 
             //assemblies.Add(typeof(System.Xml.Linq.XDocument).Assembly);
 	
             assemblies.Add(typeof(global::Microsoft.VisualStudio.TextTemplating.VSHost.TextTemplatingCallback).Assembly);
@@ -296,20 +289,7 @@ namespace T4Toolbox.VSHostLites
         {
             assemblyReference = assemblyReference.Replace("\\", Path.DirectorySeparatorChar.ToString());
             var resolvedRef = base.ResolveAssemblyReference(assemblyReference);
-            // replace some specific references...
-            if (!String.IsNullOrEmpty(resolvedRef))
-            {
-                if (!File.Exists(resolvedRef))
-                {
-                    var fileName = Path.GetFileName(resolvedRef);
-                    var regex = SpecificAssemblyReferenceRegexList.Where(r => r.Match(fileName).Success).FirstOrDefault();
-                    if (regex != null)
-                    {
-                        //try again
-                        resolvedRef = base.ResolveAssemblyReference(fileName);
-                    }
-                }
-            }
+            //todo do some replacements?
             return resolvedRef;
         }
 
