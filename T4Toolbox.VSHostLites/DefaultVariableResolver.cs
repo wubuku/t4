@@ -5,7 +5,7 @@ using System.Globalization;
 using System.IO;
 using EnvDTE80;
 
-namespace Mono.TextTemplating
+namespace T4Toolbox.VSHostLites
 {
 	/// <summary>
 	/// A default implementation of IVariableResolver returning simple paths.

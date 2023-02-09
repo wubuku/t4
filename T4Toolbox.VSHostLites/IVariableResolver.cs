@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mono.TextTemplating
+namespace T4Toolbox.VSHostLites
 {
 
 	/// <summary>

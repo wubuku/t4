@@ -29,6 +29,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.VisualStudio.TextTemplating;
 using Mono.Options;
+using T4Toolbox.VSHostLites;
 
 namespace Mono.TextTemplating
 {

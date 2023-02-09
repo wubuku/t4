@@ -6,13 +6,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Mono.TextTemplating.Properties;
 using EnvDTE80;
-using Engine = Microsoft.VisualStudio.TextTemplating.Engine;
 using System.Text.RegularExpressions;
 using T4Toolbox.EnvDteLites;
+using T4Toolbox.VSHostLites.Properties;
+using Mono.TextTemplating;
 
-namespace Mono.TextTemplating
+namespace T4Toolbox.VSHostLites
 {
     /// <summary>
     /// /

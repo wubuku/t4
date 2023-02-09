@@ -1,12 +1,12 @@
 using System;
 using T4Toolbox;
 
-namespace Mono.TextTemplating
+namespace T4Toolbox.VSHostLites
 {
     /// <summary>
     /// Class to change the LogicalCallContext temporarily.
     /// </summary>
-    public class LogicalCallContextChange : IDisposable
+    internal class LogicalCallContextChange : IDisposable
     {
         private readonly string _name;
         private readonly object _prevHint;

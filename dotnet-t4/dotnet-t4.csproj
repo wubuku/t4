@@ -27,18 +27,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mono.TextTemplating\Mono.TextTemplating.csproj" />
+    <ProjectReference Include="..\T4Toolbox.VSHostLites\T4Toolbox.VSHostLites.csproj" />
     <Compile Include="..\TextTransform\Options.cs" Link="Options.cs" />
     <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!-- <PackageReference Include="Microsoft.Build" Version="17.3.2" /> -->
-    <!-- <PackageReference Include="T4Toolbox.Lites.VisualStudio.Interfaces" Version="0.0.2" />
-    <PackageReference Include="T4Toolbox.Lites.VSTextTemplating.Mono" Version="0.0.1" />
-    <PackageReference Include="T4Toolbox.Mono" Version="0.0.1" />
-    <PackageReference Include="T4Toolbox.DirectiveProcessors.Mono" Version="0.0.1" />
-    <PackageReference Include="T4Toolbox.EnvDteLites" Version="0.0.1" /> -->
-    <PackageReference Include="T4Toolbox.Lites.VisualStudio.Mono" Version="0.0.1" />
-  </ItemGroup>
+
 
 </Project>

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mono.TextTemplating;
 
-namespace Mono.TextTemplating
+namespace T4Toolbox.VSHostLites
 {
 	public static class TemplateGeneratorUtils
 	{

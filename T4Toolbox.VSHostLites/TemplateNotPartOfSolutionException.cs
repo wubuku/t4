@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Mono.TextTemplating
+namespace T4Toolbox.VSHostLites
 {
 	/// <summary>
 	/// Is thrown when the given template is not part of the given solution.

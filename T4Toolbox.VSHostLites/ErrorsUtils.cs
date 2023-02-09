@@ -1,7 +1,7 @@
 using System;
 using System.CodeDom.Compiler;
 
-namespace Mono.TextTemplating
+namespace T4Toolbox.VSHostLites
 {
     public static class ErrorsUtils 
     {

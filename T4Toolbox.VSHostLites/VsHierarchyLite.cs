@@ -5,7 +5,7 @@ using System.Text;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace Mono.TextTemplating
+namespace T4Toolbox.VSHostLites
 {
     public class VsHierarchyLite : T4Toolbox.EnvDteLites.VsShellInterop.VsHierarchyLite, IVsBuildPropertyStorage
     {
