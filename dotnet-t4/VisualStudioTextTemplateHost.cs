@@ -23,8 +23,6 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -45,6 +43,14 @@ namespace Mono.TextTemplating
         private const string DefaultFileExtension = ".txt";
         private const string FileProtocol = "file:///";
         private static readonly TraceSource Source = new TraceSource("Mono.TextTemplating.VisualStudioTextTemplateHost");
+       
+        // ////////////////////////////////////////
+        private static readonly IList<Regex> SpecificAssemblyReferenceRegexList = new Regex[] {
+            new Regex(@"^Dddml\.[^\\\/]*\.dll$"),
+            new Regex(@"^YamlDotNet.*\.dll$"),
+        };
+        // ////////////////////////////////////////
+
         //private readonly string _templateFile; //base.TemplateFile
         private readonly string _templateDir;
         private readonly DTE2 _dte;
@@ -80,6 +86,18 @@ namespace Mono.TextTemplating
         }
 
         private ITransformationContextProvider _transformationContextProvider;
+
+        internal ITransformationContextProvider TransformationContextProvider 
+        {
+            get 
+            {
+                if (_transformationContextProvider == null)
+			    {                    
+			        _transformationContextProvider = new global::T4Toolbox.VisualStudio.TransformationContextProvider(this);
+			    }
+			    return _transformationContextProvider;
+            }
+        }
 
         IDictionary<string, Assembly> _hostContextAssemblies = null;
 
@@ -157,17 +175,11 @@ namespace Mono.TextTemplating
 			}		   
             if (serviceType == typeof(ITransformationContextProvider))//TextTemplateHostSettings.Default.GetType("T4Toolbox.ITransformationContextProvider"))
 			{
-			    if (_transformationContextProvider == null)
-			    {                    
-			        var cp = new global::T4Toolbox.VisualStudio.TransformationContextProvider(this);
-			        _transformationContextProvider = cp;
-			    }
-			    return _transformationContextProvider;
+			    return TransformationContextProvider;
 			}
 			
 			return null;
 		}
-
 
         protected override string ResolvePath (string path)
 		{
@@ -190,13 +202,6 @@ namespace Mono.TextTemplating
             }
             return base.ResolvePath(path);
         }
-
-        // ////////////////////////////////////////
-        private static readonly IList<Regex> SpecificAssemblyReferenceRegexList = new Regex[] {
-            new Regex(@"^Dddml\.[^\\\/]*\.dll$"),
-            new Regex(@"^YamlDotNet.*\.dll$"),
-        };
-        // ////////////////////////////////////////
 
         protected override string ResolveAssemblyReference (string assemblyReference)
 		{
