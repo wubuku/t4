@@ -77,6 +77,7 @@ namespace Mono.TextTemplating
 			List<string> generatorReferencePaths = new ();
 			Dictionary<string, KeyValuePair<string, string>> directiveProcessors = new ();
 			Dictionary<Tuple<string, string, string>, string> generatorParameters = new ();
+			List<string> hostContextAssemblies = new ();
 
 			optionSet = new OptionSet {
 				{
@@ -106,6 +107,11 @@ namespace Mono.TextTemplating
 					"P=",
 					"Add a {<directory>} to be searched when resolving assemblies.",
 					s => generatorReferencePaths.Add (s)
+				},
+				{
+					"HostContextAssembly=",
+					"Add a {<HostContextAssembly>} to be shared by templates.",
+					s => hostContextAssemblies.Add (s)
 				},
 				{
 					"c=|class=",
@@ -207,6 +213,7 @@ namespace Mono.TextTemplating
 				generatorRefs, generatorImports, generatorIncludePaths, generatorReferencePaths,
 				directiveProcessors, generatorParameters
 			);
+			generatorSetting.HostContextAssemblies = hostContextAssemblies;
 
 			if (inputFile != null) {
 				// ///////////////////////////////////////////////

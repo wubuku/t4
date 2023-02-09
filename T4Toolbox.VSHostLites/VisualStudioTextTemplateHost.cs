@@ -138,7 +138,15 @@ namespace T4Toolbox.VSHostLites
 
         IDictionary<string, Assembly> _hostContextAssemblies = null;
 
-        public IDictionary<string, Assembly> HostContextAssemblies { get => _hostContextAssemblies; set => _hostContextAssemblies = value; }
+        public IDictionary<string, Assembly> HostContextAssemblies
+        {
+            get
+            {
+                if (_hostContextAssemblies == null) { _hostContextAssemblies = new Dictionary<string, Assembly>(); }
+                return _hostContextAssemblies;
+            }
+            set => _hostContextAssemblies = value;
+        }
 
         public VisualStudioTextTemplateHost(string templateFile, DTE2 dte, IVariableResolver resolver, Project project)
         {
@@ -174,16 +182,43 @@ namespace T4Toolbox.VSHostLites
 
         private void InitHostContextAssemblies()
         {
+            _hostContextAssemblies = new Dictionary<string, Assembly>();
+            
             var assemblies = new List<Assembly>();
+
+            // {"System.Core", 
+            assemblies.Add(typeof(System.Linq.Enumerable).Assembly);
+			// { "System.Data", 
+            assemblies.Add(typeof(System.Data.DataTable).Assembly);
+			// { "System.Linq", 
+            assemblies.Add(typeof(System.Linq.Enumerable).Assembly);
+			// { "System.Xml", 
+            //assemblies.Add(typeof(System.Xml.XmlAttribute).Assembly);
+			// { "System.Xml.Linq", 
+            //assemblies.Add(typeof(System.Xml.Linq.XDocument).Assembly);
+	
             assemblies.Add(typeof(global::Microsoft.VisualStudio.TextTemplating.VSHost.TextTemplatingCallback).Assembly);
             assemblies.Add(typeof(global::T4Toolbox.Template).Assembly);
             assemblies.Add(typeof(global::T4Toolbox.DirectiveProcessors.TransformationContextProcessor).Assembly);
             assemblies.Add(typeof(global::T4Toolbox.EnvDteLites.DTELite).Assembly);
             assemblies.Add(typeof(global::T4Toolbox.VisualStudio.TransformationContextProvider).Assembly);
 
-            _hostContextAssemblies = new Dictionary<string, Assembly>();
-            assemblies.ForEach(a => _hostContextAssemblies.Add(a.GetName().Name, a));
+            assemblies.ForEach(a => AddHostContextAssembly(a));
             Refs.AddRange(assemblies.Select(a => a.Location));
+        }
+
+        public void AddHostContextAssembly(Assembly a)
+        {
+            HostContextAssemblies[a.GetName().Name] = a;
+        }
+
+        public void AddHostContextAssembly(string a)
+        {
+            var asmPath = ResolveAssemblyReference(a);
+            if (asmPath == null)
+                throw new ArgumentException($"Could not resolve assembly '{a}'");
+            var asm = Assembly.LoadFrom(asmPath);
+            AddHostContextAssembly(asm);
         }
 
         private TextTemplatingCallback CreateTextTemplatingCallback()

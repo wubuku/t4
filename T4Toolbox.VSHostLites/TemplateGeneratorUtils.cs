@@ -16,14 +16,17 @@ namespace T4Toolbox.VSHostLites
 			private IDictionary<string, KeyValuePair<string, string>> _directiveProcessors;
 			private IDictionary<Tuple<string, string, string>, string> _parameters;
 
+			private IList<string> _hostContextAssemblies;
+
 			public IList<string> Refs { get => _refs; set => _refs = value; }
 			public IList<string> Imports { get => _imports; set => _imports = value; }
 			public IList<string> IncludePaths { get => _includePaths; set => _includePaths = value; }
 			public IList<string> ReferencePaths { get => _referencePaths; set => _referencePaths = value; }
 			public IDictionary<string, KeyValuePair<string, string>> DirectiveProcessors { get => _directiveProcessors; set => _directiveProcessors = value; }
 			public IDictionary<Tuple<string, string, string>, string> Parameters { get => _parameters; set => _parameters = value; }
+            public IList<string> HostContextAssemblies { get => _hostContextAssemblies; set => _hostContextAssemblies = value; }
 
-			public TemplateGeneratorSetting (
+            public TemplateGeneratorSetting (
 				IList<string> generatorRefs,
 				IList<string> generatorImports,
 				IList<string> generatorIncludePaths,

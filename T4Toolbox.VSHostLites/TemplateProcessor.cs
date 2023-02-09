@@ -79,6 +79,10 @@ namespace T4Toolbox.VSHostLites
 
                     // ///////////////////////////////////
                     TemplateGeneratorUtils.SetTemplateGenerator(setting, generator);
+                    if (setting.HostContextAssemblies != null)
+                    {
+                        setting.HostContextAssemblies.ToList().ForEach(a => generator.AddHostContextAssembly(a));
+                    }
                     //Console.WriteLine("about to process template: " + templateFileName);
                     //if (true) { return new Tuple<string, VisualStudioTextTemplateHost>(null, generator); } // debug
                     // ///////////////////////////////////
