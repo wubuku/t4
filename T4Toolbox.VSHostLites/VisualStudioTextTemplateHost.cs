@@ -75,8 +75,11 @@ namespace T4Toolbox.VSHostLites
 
         internal string ProjectFullPath
         {
-            get { return _project.FullName; }
-            //set; 
+            get 
+            {
+                if (_project == null) { throw new InvalidOperationException("this._project is null."); }
+                return _project.FullName; 
+            }
         }
 
         private ITransformationContextProvider _transformationContextProvider;
@@ -139,6 +142,11 @@ namespace T4Toolbox.VSHostLites
                 return _hostContextAssemblies;
             }
             set => _hostContextAssemblies = value;
+        }
+
+        protected virtual IList<Tuple<string, string>> AssemblyReferenceReplacements 
+        {
+            get => new Tuple<string, string>[0];
         }
 
         public VisualStudioTextTemplateHost(string templateFile, DTE2 dte, IVariableResolver resolver, Project project)
@@ -289,7 +297,19 @@ namespace T4Toolbox.VSHostLites
         {
             assemblyReference = assemblyReference.Replace("\\", Path.DirectorySeparatorChar.ToString());
             var resolvedRef = base.ResolveAssemblyReference(assemblyReference);
-            //todo do some replacements?
+            if (!String.IsNullOrEmpty(resolvedRef))
+            {
+                if (!File.Exists(resolvedRef))
+                {
+                    var p = AssemblyReferenceReplacements.Where(r => Regex.Match(resolvedRef, r.Item1).Success).FirstOrDefault();
+                    if (p != null)
+                    {
+                        var replaced = Regex.Replace(resolvedRef, p.Item1, p.Item2);
+                        //System.Diagnostics.Debug.WriteLine(newRef);
+                        resolvedRef = base.ResolveAssemblyReference(replaced); // try again
+                    }
+                }
+            }
             return resolvedRef;
         }
 
