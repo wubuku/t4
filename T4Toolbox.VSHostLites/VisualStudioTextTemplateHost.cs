@@ -84,7 +84,7 @@ namespace T4Toolbox.VSHostLites
 
         private ITransformationContextProvider _transformationContextProvider;
 
-        internal ITransformationContextProvider TransformationContextProvider
+        public ITransformationContextProvider TransformationContextProvider
         {
             get
             {
@@ -94,6 +94,7 @@ namespace T4Toolbox.VSHostLites
                 }
                 return _transformationContextProvider;
             }
+            set => _transformationContextProvider = value;
         }
 
         private TextTemplatingCallback _textTemplatingCallback;
@@ -146,7 +147,7 @@ namespace T4Toolbox.VSHostLites
 
         protected virtual IList<Tuple<string, string>> AssemblyReferenceReplacements 
         {
-            get => new Tuple<string, string>[0];
+            get => Array.Empty<Tuple<string, string>>();
         }
 
         public VisualStudioTextTemplateHost(string templateFile, DTE2 dte, IVariableResolver resolver, Project project)

@@ -78,10 +78,15 @@ namespace T4Toolbox.VSHostLites
 			}
 			var project = templateFileItem.ContainingProject;
 			var projectDir = Path.GetDirectoryName (project.FullName);
-			string outDir = project.ConfigurationManager.ActiveConfiguration
-				.Properties.Item ("OutputPath").Value.ToString ();
-			Debug.Assert (projectDir != null, "projectDir != null, did not expect project.FullName to be a root directory!");
-			var targetDir = Path.GetFullPath (Path.Combine (projectDir, outDir));
+			string targetDir = null;
+			if (project.ConfigurationManager.ActiveConfiguration != null 
+				&& project.ConfigurationManager.ActiveConfiguration.Properties.Item ("OutputPath") != null)
+			{
+				string outDir = project.ConfigurationManager.ActiveConfiguration
+					.Properties.Item ("OutputPath").Value.ToString ();
+				Debug.Assert (projectDir != null, "projectDir != null, did not expect project.FullName to be a root directory!");
+				targetDir = Path.GetFullPath (Path.Combine (projectDir, outDir));
+			}
 			return new DefaultVariableResolver (projectDir, Path.GetDirectoryName (dte.Solution.FullName), targetDir);
 		}
 

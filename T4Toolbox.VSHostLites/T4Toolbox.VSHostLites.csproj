@@ -29,7 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="T4Toolbox">
-      <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox/bin/Debug/netstandard2.0/T4Toolbox.dll</HintPath>
+      <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox/bin/Debug/net6.0/T4Toolbox.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
