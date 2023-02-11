@@ -27,6 +27,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TextTemplating;
 using Mono.Options;
 using T4Toolbox.VSHostLites;
@@ -78,6 +79,8 @@ namespace Mono.TextTemplating
 			Dictionary<string, KeyValuePair<string, string>> directiveProcessors = new ();
 			Dictionary<Tuple<string, string, string>, string> generatorParameters = new ();
 			List<string> hostContextAssemblies = new ();
+			List<string> templateFileNamePatterns = new ();
+			string targetDir = null;
 
 			optionSet = new OptionSet {
 				{
@@ -112,6 +115,16 @@ namespace Mono.TextTemplating
 					"HostContextAssembly=",
 					"Add a {<HostContextAssembly>} to be shared by templates.",
 					s => hostContextAssemblies.Add (s)
+				},
+				{
+					"TargetDir=",
+					"Set variable {<TargetDir>} to be used by templates.",
+					s => targetDir = s
+				},
+				{
+					"TemplateFileNamePattern=",
+					"Add a regex {<TemplateFileNamePattern>} to filter the templates in the solution.",
+					s => templateFileNamePatterns.Add (s)
 				},
 				{
 					"c=|class=",
@@ -222,9 +235,10 @@ namespace Mono.TextTemplating
 					if (remainingArgs.Count == 2) 
 					{
 						var templateFile = remainingArgs[1];
-						return TemplateProcessor.ProcessOneFileInSolution(inputFile, null, templateFile, generatorSetting) ? 0 : 1;
+						return TemplateProcessor.ProcessOneFileInSolution(inputFile, targetDir, templateFile, generatorSetting) ? 0 : 1;
 					}
-					return TemplateProcessor.ProcessSolution(inputFile, null, null, generatorSetting) ? 0 : 1;
+					var templateFileNameRegexList = templateFileNamePatterns.Select(p => new Regex(p)).ToList();
+					return TemplateProcessor.ProcessSolution(inputFile, targetDir, templateFileNameRegexList, generatorSetting) ? 0 : 1;
 				}
 				// ///////////////////////////////////////////////
 				try {
