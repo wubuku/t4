@@ -197,7 +197,9 @@ namespace Mono.TextTemplating
 			string inputContent = null;
 			bool inputIsFromStdin = false;
 
-			if (remainingArgs.Count == 0) { //if (remainingArgs.Count != 1) {
+			string inputDir = null;
+
+			if (remainingArgs.Count == 0) { //if (remainingArgs.Count != 1) {			
 				if (Console.IsInputRedirected) {
 					inputContent = Console.In.ReadToEnd ();
 					inputIsFromStdin = true;
@@ -206,25 +208,18 @@ namespace Mono.TextTemplating
 					return 1;
 				}
 			} else {
-				inputFile = remainingArgs[0];
-				if (!File.Exists (inputFile)) {
-					Console.Error.WriteLine ("Input file '{0}' does not exist.", inputFile);
-					return 1;
-				}
-			}
-
-			bool writeToStdout = outputFile == "-" || (inputIsFromStdin && string.IsNullOrEmpty (outputFile));
-			bool isDefaultOutputFilename = false;
-
-			if (!writeToStdout && string.IsNullOrEmpty (outputFile)) {
-				outputFile = inputFile;
-				isDefaultOutputFilename = true;
-				if (Path.HasExtension (outputFile)) {
-					var dir = Path.GetDirectoryName (outputFile);
-					var fn = Path.GetFileNameWithoutExtension (outputFile);
-					outputFile = Path.Combine (dir, fn + ".txt");
+				if (searchDirectory) {
+					inputDir = remainingArgs[0];
+					if (!Directory.Exists (inputDir)) {
+						Console.Error.WriteLine ("Input directory '{0}' does not exist.", inputDir);
+						return 1;
+					}
 				} else {
-					outputFile = outputFile + ".txt";
+					inputFile = remainingArgs[0];
+					if (!File.Exists (inputFile)) {
+						Console.Error.WriteLine ("Input file '{0}' does not exist.", inputFile);
+						return 1;
+					}
 				}
 			}
 
@@ -245,25 +240,66 @@ namespace Mono.TextTemplating
 					return TemplateProcessor.ProcessSolution (inputFile, targetDir, templateFileNameRegexList, generatorSetting) ? 0 : 1;
 				}
 			}
-			var processSettings = new ProcessSettings() {
-				OutputFile = outputFile, 
-				InputFile = inputFile, 
-				Properties = properties, 
-				PreprocessClassName = preprocessClassName,
-				Debug = debug,
-				Verbose = verbose, 
-				NoPreprocessingHelpers = noPreprocessingHelpers, 
-				InputContent = inputContent, 
-				WriteToStdout = writeToStdout, 
-				IsDefaultOutputFilename = isDefaultOutputFilename
-			};
-			return ProcessTemplate (processSettings, generatorSetting);
+
+			if (searchDirectory) {
+				if (String.IsNullOrEmpty(inputDir)) {
+					Console.Error.WriteLine ("No input directory specified.");
+					return 1;
+				}
+				var patterns = templateFileNamePatterns.Select(f => new Regex(f)).ToList();
+				foreach (var templateFile in FindTemplates(inputDir, patterns)) {
+					bool writeToStdout, isDefaultOutputFilename;
+					outputFile = GetOutputSettings (outputFile, templateFile, inputIsFromStdin, out writeToStdout, out isDefaultOutputFilename);
+					var templateName = Path.GetFileNameWithoutExtension(templateFile);
+					if (!isDefaultOutputFilename) {
+						outputFile = String.Format(outputFile, templateName);
+					}
+					if (!String.IsNullOrEmpty(preprocessClassName)) {
+						preprocessClassName = String.Format(preprocessClassName, templateName);
+					}
+					var processSettings = new ProcessSettings () {
+						OutputFile = outputFile,
+						InputFile = templateFile,
+						Properties = properties,
+						PreprocessClassName = preprocessClassName,
+						Debug = debug,
+						Verbose = verbose,
+						NoPreprocessingHelpers = noPreprocessingHelpers,
+						InputContent = inputContent,
+						WriteToStdout = writeToStdout,
+						IsDefaultOutputFilename = isDefaultOutputFilename
+					};
+					(var result, outputFile) = ProcessTemplate (processSettings, generatorSetting);
+					if (result != 0) {
+						return result;
+					}
+				}
+				return 0;
+			} else {
+				bool writeToStdout, isDefaultOutputFilename;
+				outputFile = GetOutputSettings (outputFile, inputFile, inputIsFromStdin, out writeToStdout, out isDefaultOutputFilename);
+
+				var processSettings = new ProcessSettings () {
+					OutputFile = outputFile,
+					InputFile = inputFile,
+					Properties = properties,
+					PreprocessClassName = preprocessClassName,
+					Debug = debug,
+					Verbose = verbose,
+					NoPreprocessingHelpers = noPreprocessingHelpers,
+					InputContent = inputContent,
+					WriteToStdout = writeToStdout,
+					IsDefaultOutputFilename = isDefaultOutputFilename
+				};
+				(var result, outputFile) = ProcessTemplate (processSettings, generatorSetting);
+				return result;
+			}
 		}
 
-		private static int ProcessTemplate (ProcessSettings processSettings, TemplateGeneratorUtils.TemplateGeneratorSetting generatorSetting)
+		private static (int, string) ProcessTemplate (ProcessSettings processSettings, TemplateGeneratorUtils.TemplateGeneratorSetting generatorSetting)
 		{
 			string outputFile = processSettings.OutputFile;
-			string inputFile = processSettings.InputContent;
+			string inputFile = processSettings.InputFile;
 			Dictionary<string, string> properties = processSettings.Properties;
 			string preprocessClassName = processSettings.PreprocessClassName;
 			bool debug = processSettings.Debug;
@@ -279,13 +315,13 @@ namespace Mono.TextTemplating
 				}
 				catch (IOException ex) {
 					Console.Error.WriteLine ("Could not read input file '" + inputFile + "':\n" + ex);
-					return 1;
+					return (1, outputFile);
 				}
 			}
 
 			if (inputContent.Length == 0) {
 				Console.Error.WriteLine ("Input is empty");
-				return 1;
+				return (1, outputFile);
 			}
 
 			var generator = new ToolTemplateGenerator ();
@@ -337,12 +373,12 @@ namespace Mono.TextTemplating
 			}
 			catch (IOException ex) {
 				Console.Error.WriteLine ("Could not write output file '" + outputFile + "':\n" + ex);
-				return 1;
+				return (1, outputFile);
 			}
 
 			LogErrors (generator);
 
-			return generator.Errors.HasErrors ? 1 : 0;
+			return (generator.Errors.HasErrors ? 1 : 0, outputFile);
 		}
 
 		static void SplitClassName (string className, TemplateSettings settings)
@@ -353,6 +389,44 @@ namespace Mono.TextTemplating
 				settings.Name = className.Substring (s + 1);
 			}
 		}
+
+
+		private static string GetOutputSettings (
+			string outputFile, 
+			string inputFile, bool inputIsFromStdin, 
+			out bool writeToStdout, out bool isDefaultOutputFilename)
+		{
+			writeToStdout = outputFile == "-" || (inputIsFromStdin && string.IsNullOrEmpty (outputFile));
+			isDefaultOutputFilename = false;
+			if (!writeToStdout && string.IsNullOrEmpty (outputFile)) {
+				outputFile = inputFile;
+				isDefaultOutputFilename = true;
+				if (Path.HasExtension (outputFile)) {
+					var dir = Path.GetDirectoryName (outputFile);
+					var fn = Path.GetFileNameWithoutExtension (outputFile);
+					outputFile = Path.Combine (dir, fn + ".txt");
+				} else {
+					outputFile = outputFile + ".txt";
+				}
+			}
+
+			return outputFile;
+		}
+
+        private static IEnumerable<string> FindTemplates(string path, IList<Regex> patterns)
+        {
+            foreach (var template in Directory.EnumerateDirectories(path).SelectMany(dir => FindTemplates(dir, patterns)))
+            {
+                yield return template;
+            }
+            foreach (var template in Directory.EnumerateFiles(path))
+            {
+				if (patterns.Where(p => p.Match(template).Success).FirstOrDefault() != null) 
+				{
+               	 	yield return Path.GetFullPath(template); 
+				}
+            }
+        }
 
 		static void AddCoercedSessionParameters (TemplateGenerator generator, ParsedTemplate pt, Dictionary<string, string> properties)
 		{

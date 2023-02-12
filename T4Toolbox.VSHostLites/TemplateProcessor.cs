@@ -274,13 +274,13 @@ namespace T4Toolbox.VSHostLites
             return filteredErrors;
         }
 
-        private static IEnumerable<string> FindTemplates(string p)
+        private static IEnumerable<string> FindTemplates(string path)
         {
-            foreach (var template in Directory.EnumerateDirectories(p).SelectMany(FindTemplates))
+            foreach (var template in Directory.EnumerateDirectories(path).SelectMany(FindTemplates))
             {
                 yield return template;
             }
-            foreach (var template in Directory.EnumerateFiles(p, "*.tt"))
+            foreach (var template in Directory.EnumerateFiles(path, "*.tt"))
             {
                 yield return Path.GetFullPath(template);
             }
