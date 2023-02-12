@@ -81,6 +81,7 @@ namespace Mono.TextTemplating
 			List<string> hostContextAssemblies = new ();
 			List<string> templateFileNamePatterns = new ();
 			string targetDir = null;
+			bool searchDirectory = false;
 
 			optionSet = new OptionSet {
 				{
@@ -155,6 +156,11 @@ namespace Mono.TextTemplating
 					s => noPreprocessingHelpers = true
 				},
 				{
+					"SearchDirectory",
+					"The The template-file argument is actually the directory where the template files are searched.",
+					s => searchDirectory = true
+				},
+				{
 					"h|?|help",
 					"Show help",
 					s => ShowHelp (false)
@@ -185,9 +191,9 @@ namespace Mono.TextTemplating
 					}
 				)
 			};
-		
+
 			var remainingArgs = optionSet.Parse (args);
-			
+
 			string inputContent = null;
 			bool inputIsFromStdin = false;
 
@@ -222,7 +228,7 @@ namespace Mono.TextTemplating
 				}
 			}
 
-			var generatorSetting = new TemplateGeneratorUtils.TemplateGeneratorSetting(
+			var generatorSetting = new TemplateGeneratorUtils.TemplateGeneratorSetting (
 				generatorRefs, generatorImports, generatorIncludePaths, generatorReferencePaths,
 				directiveProcessors, generatorParameters
 			);
@@ -230,16 +236,43 @@ namespace Mono.TextTemplating
 
 			if (inputFile != null) {
 				// ///////////////////////////////////////////////
-				if (inputFile.EndsWith(".sln")) 
-				{
-					if (remainingArgs.Count == 2) 
-					{
+				if (inputFile.EndsWith (".sln")) {
+					if (remainingArgs.Count == 2) {
 						var templateFile = remainingArgs[1];
-						return TemplateProcessor.ProcessOneFileInSolution(inputFile, targetDir, templateFile, generatorSetting) ? 0 : 1;
+						return TemplateProcessor.ProcessOneFileInSolution (inputFile, targetDir, templateFile, generatorSetting) ? 0 : 1;
 					}
-					var templateFileNameRegexList = templateFileNamePatterns.Select(p => new Regex(p)).ToList();
-					return TemplateProcessor.ProcessSolution(inputFile, targetDir, templateFileNameRegexList, generatorSetting) ? 0 : 1;
+					var templateFileNameRegexList = templateFileNamePatterns.Select (p => new Regex (p)).ToList ();
+					return TemplateProcessor.ProcessSolution (inputFile, targetDir, templateFileNameRegexList, generatorSetting) ? 0 : 1;
 				}
+			}
+			var processSettings = new ProcessSettings() {
+				OutputFile = outputFile, 
+				InputFile = inputFile, 
+				Properties = properties, 
+				PreprocessClassName = preprocessClassName,
+				Debug = debug,
+				Verbose = verbose, 
+				NoPreprocessingHelpers = noPreprocessingHelpers, 
+				InputContent = inputContent, 
+				WriteToStdout = writeToStdout, 
+				IsDefaultOutputFilename = isDefaultOutputFilename
+			};
+			return ProcessTemplate (processSettings, generatorSetting);
+		}
+
+		private static int ProcessTemplate (ProcessSettings processSettings, TemplateGeneratorUtils.TemplateGeneratorSetting generatorSetting)
+		{
+			string outputFile = processSettings.OutputFile;
+			string inputFile = processSettings.InputContent;
+			Dictionary<string, string> properties = processSettings.Properties;
+			string preprocessClassName = processSettings.PreprocessClassName;
+			bool debug = processSettings.Debug;
+			bool verbose = processSettings.Verbose;
+			bool noPreprocessingHelpers = processSettings.NoPreprocessingHelpers;
+			string inputContent = processSettings.InputContent;
+			bool writeToStdout = processSettings.WriteToStdout;
+			bool isDefaultOutputFilename = processSettings.IsDefaultOutputFilename;
+			if (inputFile != null) {
 				// ///////////////////////////////////////////////
 				try {
 					inputContent = File.ReadAllText (inputFile);
@@ -255,7 +288,7 @@ namespace Mono.TextTemplating
 				return 1;
 			}
 
-			var generator = new ToolTemplateGenerator ();		
+			var generator = new ToolTemplateGenerator ();
 			TemplateGeneratorUtils.SetTemplateGenerator (generatorSetting, generator);
 
 			var pt = generator.ParseTemplate (inputFile, inputContent);
