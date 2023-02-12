@@ -236,7 +236,9 @@ namespace Mono.TextTemplating
 						var templateFile = remainingArgs[1];
 						return TemplateProcessor.ProcessOneFileInSolution (inputFile, targetDir, templateFile, generatorSetting) ? 0 : 1;
 					}
-					var templateFileNameRegexList = templateFileNamePatterns.Select (p => new Regex (p)).ToList ();
+					var templateFileNameRegexList = templateFileNamePatterns.Count > 0
+						? templateFileNamePatterns.Select (p => new Regex (p)).ToList ()
+						: null;// NO filter!
 					return TemplateProcessor.ProcessSolution (inputFile, targetDir, templateFileNameRegexList, generatorSetting) ? 0 : 1;
 				}
 			}

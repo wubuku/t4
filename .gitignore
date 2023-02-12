@@ -28,3 +28,4 @@ Thumbs.db
 # dotCover
 *.dotCover
 .vscode
+dotnet-t4/Properties/launchSettings.json
