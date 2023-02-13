@@ -13,6 +13,7 @@
     <!--<ToolCommandName>t4</ToolCommandName>-->
     <RootNamespace>Mono.TextTemplating</RootNamespace>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">

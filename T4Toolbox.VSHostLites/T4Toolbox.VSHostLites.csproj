@@ -21,7 +21,33 @@
     <PackageReference Include="T4Toolbox.EnvDteLites" Version="0.0.3" /> -->
     <PackageReference Include="T4Toolbox.Lites.VisualStudio.Mono" Version="0.0.3" />
   </ItemGroup>
-
+ 
+  <!--<ItemGroup>
+    <Reference Include="T4Toolbox.VSTextTemplating">
+      <HintPath>../../T4Toolbox/src/T4Toolbox.VSTextTemplating/bin/Debug/netstandard2.0/T4Toolbox.VSTextTemplating.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="T4Toolbox">
+      <HintPath>../../T4Toolbox/src/T4Toolbox/bin/Debug/net6.0/T4Toolbox.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="T4Toolbox.EnvDteLites">
+      <HintPath>../../T4Toolbox/src/T4Toolbox.EnvDteLites/bin/Debug/net6.0/T4Toolbox.EnvDteLites.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="T4Toolbox.DirectiveProcessors">
+      <HintPath>../../T4Toolbox/src/T4Toolbox.DirectiveProcessors/bin/Debug/netstandard2.0/T4Toolbox.DirectiveProcessors.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="T4Toolbox.VisualStudio">
+      <HintPath>../../T4Toolbox/src/T4Toolbox.VisualStudio/bin/Debug/net6.0/T4Toolbox.VisualStudio.dll</HintPath>
+    </Reference>
+  </ItemGroup>-->
+ 
   <!-- <ItemGroup>
     <Reference Include="T4Toolbox.VSTextTemplating">
       <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox.VSTextTemplating/bin/Debug/netstandard2.0/T4Toolbox.VSTextTemplating.dll</HintPath>
