@@ -15,11 +15,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" Version="17.3.2" />
     <PackageReference Include="T4Toolbox.Lites.VisualStudio.Interfaces" Version="0.0.2" />
-    <!-- <PackageReference Include="T4Toolbox.Lites.VSTextTemplating.Mono" Version="0.0.3" />
-    <PackageReference Include="T4Toolbox.Mono" Version="0.0.3" />
-    <PackageReference Include="T4Toolbox.DirectiveProcessors.Mono" Version="0.0.3" />
-    <PackageReference Include="T4Toolbox.EnvDteLites" Version="0.0.3" /> -->
-    <PackageReference Include="T4Toolbox.Lites.VisualStudio.Mono" Version="0.0.3" />
+    <!-- <PackageReference Include="T4Toolbox.Lites.VSTextTemplating.Mono" Version="0.0.4" />
+    <PackageReference Include="T4Toolbox.Mono" Version="0.0.4" />
+    <PackageReference Include="T4Toolbox.DirectiveProcessors.Mono" Version="0.0.4" />
+    <PackageReference Include="T4Toolbox.EnvDteLites" Version="0.0.4" /> -->
+    <PackageReference Include="T4Toolbox.Lites.VisualStudio.Mono" Version="0.0.4" />
   </ItemGroup>
  
   <!--<ItemGroup>
