@@ -257,17 +257,15 @@ namespace Mono.TextTemplating
 						currentOutputFile = String.Format (outputFile, templateName);
 					}
 					currentOutputFile = GetOutputSettings (currentOutputFile, templateFile, inputIsFromStdin, out writeToStdout, out isDefaultOutputFilename);
-					if (!isDefaultOutputFilename) {
-						currentOutputFile = String.Format(currentOutputFile, templateName);
-					}
+					string currentPreprocessClassName = null;
 					if (!String.IsNullOrEmpty(preprocessClassName)) {
-						preprocessClassName = String.Format(preprocessClassName, templateName);
+						currentPreprocessClassName = String.Format(preprocessClassName, templateName);
 					}
 					var processSettings = new ProcessSettings () {
 						OutputFile = currentOutputFile,
 						InputFile = templateFile,
 						Properties = properties,
-						PreprocessClassName = preprocessClassName,
+						PreprocessClassName = currentPreprocessClassName,
 						Debug = debug,
 						Verbose = verbose,
 						NoPreprocessingHelpers = noPreprocessingHelpers,
