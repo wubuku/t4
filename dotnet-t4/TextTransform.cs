@@ -251,16 +251,20 @@ namespace Mono.TextTemplating
 				var patterns = templateFileNamePatterns.Select(f => new Regex(f)).ToList();
 				foreach (var templateFile in FindTemplates(inputDir, patterns)) {
 					bool writeToStdout, isDefaultOutputFilename;
-					outputFile = GetOutputSettings (outputFile, templateFile, inputIsFromStdin, out writeToStdout, out isDefaultOutputFilename);
-					var templateName = Path.GetFileNameWithoutExtension(templateFile);
+					var templateName = Path.GetFileNameWithoutExtension (templateFile);
+					string currentOutputFile = null;
+					if (!String.IsNullOrEmpty(outputFile)) { //outputFile from CLI option
+						currentOutputFile = String.Format (outputFile, templateName);
+					}
+					currentOutputFile = GetOutputSettings (currentOutputFile, templateFile, inputIsFromStdin, out writeToStdout, out isDefaultOutputFilename);
 					if (!isDefaultOutputFilename) {
-						outputFile = String.Format(outputFile, templateName);
+						currentOutputFile = String.Format(currentOutputFile, templateName);
 					}
 					if (!String.IsNullOrEmpty(preprocessClassName)) {
 						preprocessClassName = String.Format(preprocessClassName, templateName);
 					}
 					var processSettings = new ProcessSettings () {
-						OutputFile = outputFile,
+						OutputFile = currentOutputFile,
 						InputFile = templateFile,
 						Properties = properties,
 						PreprocessClassName = preprocessClassName,
@@ -271,7 +275,7 @@ namespace Mono.TextTemplating
 						WriteToStdout = writeToStdout,
 						IsDefaultOutputFilename = isDefaultOutputFilename
 					};
-					(var result, outputFile) = ProcessTemplate (processSettings, generatorSetting);
+					(var result, currentOutputFile) = ProcessTemplate (processSettings, generatorSetting);
 					if (result != 0) {
 						return result;
 					}
