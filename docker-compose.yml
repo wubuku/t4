@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  dotnet-t4:
+    image: ${DOCKER_REGISTRY-}dotnett4
+    build:
+      context: .
+      dockerfile: ./Dockerfile

@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.CodeDom" Version="5.0.0" Condition="'$(TargetFramework)'!='net472'" />
-    <None Include="readme.md" Pack="true" PackagePath="\"/>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

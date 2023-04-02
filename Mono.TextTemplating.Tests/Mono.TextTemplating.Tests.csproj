@@ -29,7 +29,6 @@
   <ItemGroup>
     <None Include="TestCases\**\*.*" />
     <!-- disable parallel test execution on github actions, it hangs the runner there -->
-    <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" Condition="'$(GITHUB_ACTIONS)'=='true'" />
   </ItemGroup>
 
   <!-- download packages that contains dlls referenced by test tt files -->
@@ -49,14 +48,10 @@
       <!-- temp vars to make escaping manageable -->
       <_PackageDownloadWithVersion Include="@(PackageDownload)" Version="$([System.String]::Copy('%(Version)').Replace('[','').Replace(']',''))" />
       <_PackageDownloadWithPath Include="@(_PackageDownloadWithVersion)" Path="$(_NuGetPackageRootWithTrailingSlash)$([System.String]::Copy('%(Identity)').ToLower())\%(Version)" />
-      <_PackageDownloadVars
-        Include="@(_PackageDownloadWithPath)"
-        VarName="$([System.String]::Copy('%(Identity)_%(Version)').Replace('.','_'))"
-        EscapedValue="$([System.String]::Copy('%(Path)').Replace('\','\\'))"
-      />
+      <_PackageDownloadVars Include="@(_PackageDownloadWithPath)" VarName="$([System.String]::Copy('%(Identity)_%(Version)').Replace('.','_'))" EscapedValue="$([System.String]::Copy('%(Path)').Replace('\','\\'))" />
       <_PackageDownloadPathConstLines Include="namespace $(ProjectName) {" />
       <_PackageDownloadPathConstLines Include="partial class PackagePath {" />
-      <_PackageDownloadPathConstLines Include="@(_PackageDownloadVars->'    public static TestDataPath %(VarName) =&gt; new(&quot;%(EscapedValue)&quot;);')" />
+      <_PackageDownloadPathConstLines Include="@(_PackageDownloadVars-&gt;'    public static TestDataPath %(VarName) =&gt; new(&quot;%(EscapedValue)&quot;);')" />
       <_PackageDownloadPathConstLines Include="}}" />
     </ItemGroup>
 
