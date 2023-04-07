@@ -11,17 +11,17 @@
   <ItemGroup>
     <ProjectReference Include="..\Mono.TextTemplating\Mono.TextTemplating.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" Version="17.3.2" />
     <PackageReference Include="T4Toolbox.Lites.VisualStudio.Interfaces" Version="0.0.2" />
-    <!-- <PackageReference Include="T4Toolbox.Lites.VSTextTemplating.Mono" Version="0.0.4" />
-    <PackageReference Include="T4Toolbox.Mono" Version="0.0.4" />
-    <PackageReference Include="T4Toolbox.DirectiveProcessors.Mono" Version="0.0.4" />
-    <PackageReference Include="T4Toolbox.EnvDteLites" Version="0.0.4" /> -->
-    <PackageReference Include="T4Toolbox.Lites.VisualStudio.Mono" Version="0.0.4" />
+    <!-- <PackageReference Include="T4Toolbox.Lites.VSTextTemplating.Mono" Version="0.0.5" />
+    <PackageReference Include="T4Toolbox.Mono" Version="0.0.5" />
+    <PackageReference Include="T4Toolbox.DirectiveProcessors.Mono" Version="0.0.5" />
+    <PackageReference Include="T4Toolbox.EnvDteLites" Version="0.0.5" /> -->
+    <PackageReference Include="T4Toolbox.Lites.VisualStudio.Mono" Version="0.0.5" />
   </ItemGroup>
- 
+
   <!--<ItemGroup>
     <Reference Include="T4Toolbox.VSTextTemplating">
       <HintPath>../../T4Toolbox/src/T4Toolbox.VSTextTemplating/bin/Debug/netstandard2.0/T4Toolbox.VSTextTemplating.dll</HintPath>
@@ -47,7 +47,7 @@
       <HintPath>../../T4Toolbox/src/T4Toolbox.VisualStudio/bin/Debug/net6.0/T4Toolbox.VisualStudio.dll</HintPath>
     </Reference>
   </ItemGroup>-->
- 
+
   <!-- <ItemGroup>
     <Reference Include="T4Toolbox.VSTextTemplating">
       <HintPath>../../../../Documents/olegsych/T4Toolbox/src/T4Toolbox.VSTextTemplating/bin/Debug/netstandard2.0/T4Toolbox.VSTextTemplating.dll</HintPath>
